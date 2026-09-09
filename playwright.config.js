@@ -14,6 +14,8 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  /* Maximum time one test can run for */
+  timeout: 60 * 1000,
   /* Run tests sequentially to prevent concurrent OTP requests with same account */
   fullyParallel: false,
   workers: 1,
@@ -27,7 +29,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     launchOptions: {
-      slowMo:500,
+      slowMo: process.env.CI ? 0 : 300,
     },
   },
 
