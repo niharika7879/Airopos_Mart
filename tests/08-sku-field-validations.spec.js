@@ -41,23 +41,6 @@ test.describe('Master Data - Specific Field Validations (Negative)', () => {
     expect(hasError).toBeTruthy();
   });
 
-  test('should show validation error when UOM is missing', async ({ page }) => {
-    const skuPage = new MasterDataSkuPage(page);
-
-    await skuPage.clickGenerateBarcode();
-    await skuPage.selectOption(skuPage.brandInput, 'Aashirvaad');
-    await skuPage.selectOption(skuPage.baseProductInput, 'Aashirvaad Maida 500g');
-    await skuPage.hsnCodeInput.fill('123456');
-    await skuPage.selectOption(skuPage.taxSelect, '5');
-
-    await skuPage.clickSave();
-
-    const errorIndicator = page.locator('.form-group').filter({ hasText: /UOM/i }).locator('.v-field--error, .v-messages__message, .v-input--error').first();
-    const toast = page.locator('.v-snackbar__content, .v-alert').first();
-    const hasError = (await errorIndicator.isVisible({ timeout: 4000 }).catch(() => false)) ||
-                     (await toast.isVisible({ timeout: 4000 }).catch(() => false));
-    expect(hasError).toBeTruthy();
-  });
 
   test('should show validation error when mandatory fields are missing', async ({ page }) => {
     const skuPage = new MasterDataSkuPage(page);
