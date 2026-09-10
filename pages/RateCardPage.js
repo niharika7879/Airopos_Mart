@@ -30,20 +30,20 @@ export class RateCardPage {
 
     // Pricing Fields inside modal
     this.pricingSection = this.modal.locator('.rate-card-section').filter({ hasText: /pricing/i });
-    this.basicPriceInput = this.modal.locator('input[placeholder*="0"]').first();
-    this.schPercentageInput = this.modal.getByLabel('Sch %');
-    this.schDiscountInput = this.modal.getByLabel('Sch Discount(₹)');
-    this.inputTaxInput = this.modal.getByLabel('Input Tax %');
-    this.cessInput = this.modal.getByLabel('Cess %');
-    this.cessAmountInput = this.modal.getByLabel('Cess Amt(₹)');
-    this.taxAmountInput = this.modal.getByLabel('Tax Amt(₹)');
-    this.costPriceInput = this.modal.getByLabel('Cost Price (₹)').first();
-    this.markupPercentageInput = this.modal.getByLabel('Markup %').first();
-    this.mrpInput = this.modal.getByLabel('MRP (₹)');
-    this.discountPercentageInput = this.modal.getByLabel('Disc %');
-    this.retailPriceInput = this.modal.getByLabel('Retail Price (₹)');
-    this.wholesalePriceInput = this.modal.getByLabel('W Price (₹)');
-    this.batchNoInput = this.modal.getByLabel('Batch No');
+    this.basicPriceInput = this.modal.getByLabel(/base price/i);
+    this.schPercentageInput = this.modal.getByLabel(/sch %/i);
+    this.schDiscountInput = this.modal.getByLabel(/sch discount/i);
+    this.inputTaxInput = this.modal.getByLabel(/input tax/i);
+    this.cessInput = this.modal.getByLabel(/cess %/i);
+    this.cessAmountInput = this.modal.getByLabel(/cess amt/i);
+    this.taxAmountInput = this.modal.getByLabel(/tax amt/i);
+    this.costPriceInput = this.modal.getByLabel(/cost price/i).first();
+    this.markupPercentageInput = this.modal.getByLabel(/markup %/i).first();
+    this.mrpInput = this.modal.getByLabel(/mrp/i);
+    this.discountPercentageInput = this.modal.getByLabel(/disc %/i);
+    this.retailPriceInput = this.modal.getByLabel(/retail price/i);
+    this.wholesalePriceInput = this.modal.getByLabel(/w price/i);
+    this.batchNoInput = this.modal.getByLabel(/batch no/i);
 
     // Radios
     this.freeItemYes = this.modal.locator('.inline-radio-group').filter({ hasText: /free item/i }).locator('.v-radio').filter({ hasText: /yes/i });
@@ -88,57 +88,43 @@ export class RateCardPage {
     freeItem = '',
   } = {}) {
     if (basicPrice) {
-      await this.basicPriceInput.click();
       await this.basicPriceInput.fill(String(basicPrice));
-      await this.page.keyboard.press('Tab');
-      await this.page.waitForTimeout(300);
+      await this.page.waitForTimeout(500);
     }
 
     if (schPercentage) {
-      await this.schPercentageInput.click();
       await this.schPercentageInput.fill(String(schPercentage));
-      await this.page.keyboard.press('Tab');
       await this.page.waitForTimeout(300);
     }
 
     if (cess) {
-      await this.cessInput.click();
       await this.cessInput.fill(String(cess));
-      await this.page.keyboard.press('Tab');
-      await this.page.waitForTimeout(300);
-    }
-
-    if (costPrice) {
-      await this.costPriceInput.click();
-      await this.costPriceInput.fill(String(costPrice));
-      await this.page.keyboard.press('Tab');
       await this.page.waitForTimeout(300);
     }
 
     if (mrp) {
-      await this.mrpInput.click();
       await this.mrpInput.fill(String(mrp));
-      await this.page.keyboard.press('Tab');
-      await this.page.waitForTimeout(300);
+      await this.page.waitForTimeout(500);
     }
 
     if (retailPrice) {
-      await this.retailPriceInput.click();
       await this.retailPriceInput.fill(String(retailPrice));
-      await this.page.keyboard.press('Tab');
-      await this.page.waitForTimeout(300);
+      await this.page.waitForTimeout(500);
     }
 
     if (wPrice) {
-      await this.wholesalePriceInput.click();
       await this.wholesalePriceInput.fill(String(wPrice));
-      await this.page.keyboard.press('Tab');
+      await this.page.waitForTimeout(300);
+    }
+
+    if (costPrice) {
+      await this.costPriceInput.fill(String(costPrice));
       await this.page.waitForTimeout(300);
     }
 
     if (batchNo) {
-      await this.batchNoInput.click();
       await this.batchNoInput.fill(String(batchNo));
+      await this.page.waitForTimeout(200);
     }
 
     if (freeItem) {
