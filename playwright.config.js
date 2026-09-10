@@ -35,19 +35,40 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    // Global setup: login once and persist session to storageState
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.js/,
+    },
+
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
+      testIgnore: /.*\.setup\.js/,
     },
 
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: {
+        ...devices['Desktop Firefox'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
+      testIgnore: /.*\.setup\.js/,
     },
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: {
+        ...devices['Desktop Safari'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
+      testIgnore: /.*\.setup\.js/,
     },
 
     /* Test against mobile viewports. */
