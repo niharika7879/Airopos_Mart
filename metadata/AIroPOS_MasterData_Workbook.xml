@@ -1,0 +1,412 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#000000"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="HeaderStyle">
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#FFFFFF" ss:Bold="1"/>
+   <Interior ss:Color="#1F4E78" ss:Pattern="Solid"/>
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+  </Style>
+ </Styles>
+
+ <Worksheet ss:Name="SKU_Catalog">
+  <Table>
+   <Row ss:StyleID="HeaderStyle">
+    <Cell><Data ss:Type="String">Barcode</Data></Cell>
+    <Cell><Data ss:Type="String">Base_Product_Name</Data></Cell>
+    <Cell><Data ss:Type="String">Category</Data></Cell>
+    <Cell><Data ss:Type="String">Sub_Category</Data></Cell>
+    <Cell><Data ss:Type="String">Brand_Name</Data></Cell>
+    <Cell><Data ss:Type="String">Manufacturer_Name</Data></Cell>
+    <Cell><Data ss:Type="String">Variant_Name</Data></Cell>
+    <Cell><Data ss:Type="String">UOM</Data></Cell>
+    <Cell><Data ss:Type="String">Unit_Value</Data></Cell>
+    <Cell><Data ss:Type="String">HSN_Code</Data></Cell>
+    <Cell><Data ss:Type="String">Tax (%)</Data></Cell>
+    <Cell><Data ss:Type="String">Cess (%)</Data></Cell>
+    <Cell><Data ss:Type="String">Stop_Order_Qty</Data></Cell>
+    <Cell><Data ss:Type="String">Status</Data></Cell>
+    <Cell><Data ss:Type="String">Is_Free_Item</Data></Cell>
+    <Cell><Data ss:Type="String">Scenario</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">8906014640011</Data></Cell>
+    <Cell><Data ss:Type="String">Basmati Rice Premium</Data></Cell>
+    <Cell><Data ss:Type="String">Grocery</Data></Cell>
+    <Cell><Data ss:Type="String">Food Grains</Data></Cell>
+    <Cell><Data ss:Type="String">Daawat</Data></Cell>
+    <Cell><Data ss:Type="String">LT Foods Ltd</Data></Cell>
+    <Cell><Data ss:Type="String">5kg Pack</Data></Cell>
+    <Cell><Data ss:Type="String">kg</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="String">10063020</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">5</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">Valid_kg</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">8901058852210</Data></Cell>
+    <Cell><Data ss:Type="String">Kashmir Saffron</Data></Cell>
+    <Cell><Data ss:Type="String">Grocery</Data></Cell>
+    <Cell><Data ss:Type="String">Spices &amp; Masalas</Data></Cell>
+    <Cell><Data ss:Type="String">Everest</Data></Cell>
+    <Cell><Data ss:Type="String">Everest Spices Pvt Ltd</Data></Cell>
+    <Cell><Data ss:Type="String">1g Blister</Data></Cell>
+    <Cell><Data ss:Type="String">g</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="String">09102010</Data></Cell>
+    <Cell><Data ss:Type="Number">5</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">20</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">Valid_g</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">8901764012015</Data></Cell>
+    <Cell><Data ss:Type="String">Coconut Cooking Oil</Data></Cell>
+    <Cell><Data ss:Type="String">Grocery</Data></Cell>
+    <Cell><Data ss:Type="String">Edible Oils</Data></Cell>
+    <Cell><Data ss:Type="String">Parachute</Data></Cell>
+    <Cell><Data ss:Type="String">Marico Limited</Data></Cell>
+    <Cell><Data ss:Type="String">1 Litre Bottle</Data></Cell>
+    <Cell><Data ss:Type="String">l</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="String">15131900</Data></Cell>
+    <Cell><Data ss:Type="Number">5</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">10</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">Valid_l</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">8902080005012</Data></Cell>
+    <Cell><Data ss:Type="String">Sparkling Club Soda</Data></Cell>
+    <Cell><Data ss:Type="String">Beverages</Data></Cell>
+    <Cell><Data ss:Type="String">Carbonated Drinks</Data></Cell>
+    <Cell><Data ss:Type="String">Kinley</Data></Cell>
+    <Cell><Data ss:Type="String">Coca-Cola Beverages</Data></Cell>
+    <Cell><Data ss:Type="String">300ml Can</Data></Cell>
+    <Cell><Data ss:Type="String">ml</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="String">22011010</Data></Cell>
+    <Cell><Data ss:Type="Number">28</Data></Cell>
+    <Cell><Data ss:Type="Number">12</Data></Cell>
+    <Cell><Data ss:Type="Number">50</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">Valid_ml</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">8901030383120</Data></Cell>
+    <Cell><Data ss:Type="String">Dairy Milk Silk</Data></Cell>
+    <Cell><Data ss:Type="String">Snacks &amp; Foods</Data></Cell>
+    <Cell><Data ss:Type="String">Chocolates</Data></Cell>
+    <Cell><Data ss:Type="String">Cadbury</Data></Cell>
+    <Cell><Data ss:Type="String">Mondelez India Foods</Data></Cell>
+    <Cell><Data ss:Type="String">150g Bar</Data></Cell>
+    <Cell><Data ss:Type="String">pcs</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="String">18063200</Data></Cell>
+    <Cell><Data ss:Type="Number">18</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">15</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">Valid_pcs</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">8908000111221</Data></Cell>
+    <Cell><Data ss:Type="String">Farm Fresh Eggs</Data></Cell>
+    <Cell><Data ss:Type="String">Dairy &amp; Eggs</Data></Cell>
+    <Cell><Data ss:Type="String">Fresh Eggs</Data></Cell>
+    <Cell><Data ss:Type="String">Eggoz</Data></Cell>
+    <Cell><Data ss:Type="String">Nurture Organics</Data></Cell>
+    <Cell><Data ss:Type="String">12 Pack Tray</Data></Cell>
+    <Cell><Data ss:Type="String">dozen</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="String">04072100</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">8</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">Valid_dozen</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">8908000111222</Data></Cell>
+    <Cell><Data ss:Type="String">Gourmet Cupcakes</Data></Cell>
+    <Cell><Data ss:Type="String">Bakery</Data></Cell>
+    <Cell><Data ss:Type="String">Pastries &amp; Cakes</Data></Cell>
+    <Cell><Data ss:Type="String">BakeHouse</Data></Cell>
+    <Cell><Data ss:Type="String">BakeHouse Confectionery</Data></Cell>
+    <Cell><Data ss:Type="String">6 Pack Box</Data></Cell>
+    <Cell><Data ss:Type="String">half-dozen</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="String">19059010</Data></Cell>
+    <Cell><Data ss:Type="Number">18</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">6</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">Valid_half_dozen</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">8907000333011</Data></Cell>
+    <Cell><Data ss:Type="String">Opalware Dinner Set</Data></Cell>
+    <Cell><Data ss:Type="String">Home &amp; Kitchen</Data></Cell>
+    <Cell><Data ss:Type="String">Crockery</Data></Cell>
+    <Cell><Data ss:Type="String">Cello</Data></Cell>
+    <Cell><Data ss:Type="String">Cello World Ltd</Data></Cell>
+    <Cell><Data ss:Type="String">18 Pcs Set</Data></Cell>
+    <Cell><Data ss:Type="String">sets</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="String">69111011</Data></Cell>
+    <Cell><Data ss:Type="Number">12</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">Explicit_Zero_StopOrder</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">8907000333022</Data></Cell>
+    <Cell><Data ss:Type="String">Pillow Covers Pair</Data></Cell>
+    <Cell><Data ss:Type="String">Home &amp; Living</Data></Cell>
+    <Cell><Data ss:Type="String">Bed Linen</Data></Cell>
+    <Cell><Data ss:Type="String">Bombay Dyeing</Data></Cell>
+    <Cell><Data ss:Type="String">Bombay Dyeing &amp; Mfg Co</Data></Cell>
+    <Cell><Data ss:Type="String">2-Pack Cover</Data></Cell>
+    <Cell><Data ss:Type="String">2 sets</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="String">63049200</Data></Cell>
+    <Cell><Data ss:Type="Number">12</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">Explicit_Zero_StopOrder</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">8907000333033</Data></Cell>
+    <Cell><Data ss:Type="String">Luxury Bath Towel Set</Data></Cell>
+    <Cell><Data ss:Type="String">Home &amp; Living</Data></Cell>
+    <Cell><Data ss:Type="String">Bath Linen</Data></Cell>
+    <Cell><Data ss:Type="String">Trident</Data></Cell>
+    <Cell><Data ss:Type="String">Trident Limited</Data></Cell>
+    <Cell><Data ss:Type="String">4 Towels Pack</Data></Cell>
+    <Cell><Data ss:Type="String">4 sets</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="String">63026000</Data></Cell>
+    <Cell><Data ss:Type="Number">12</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">4</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">Valid_4_sets</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">8909990001114</Data></Cell>
+    <Cell><Data ss:Type="String">Promo Steel Spoon</Data></Cell>
+    <Cell><Data ss:Type="String">Home &amp; Kitchen</Data></Cell>
+    <Cell><Data ss:Type="String">Cutlery</Data></Cell>
+    <Cell><Data ss:Type="String">AIroPOS Promo</Data></Cell>
+    <Cell><Data ss:Type="String">InHouse Merchandise</Data></Cell>
+    <Cell><Data ss:Type="String">Stainless</Data></Cell>
+    <Cell><Data ss:Type="String">pcs</Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
+    <Cell><Data ss:Type="String">82159900</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="Number">0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+    <Cell><Data ss:Type="String">TRUE</Data></Cell>
+    <Cell><Data ss:Type="String">Free_Promo_Item</Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+
+ <Worksheet ss:Name="Units_of_Measurement_UOM">
+  <Table>
+   <Row ss:StyleID="HeaderStyle">
+    <Cell><Data ss:Type="String">UOM_Code</Data></Cell>
+    <Cell><Data ss:Type="String">Symbol</Data></Cell>
+    <Cell><Data ss:Type="String">Name</Data></Cell>
+    <Cell><Data ss:Type="String">Uom_Type</Data></Cell>
+    <Cell><Data ss:Type="String">Is_Base_Unit</Data></Cell>
+    <Cell><Data ss:Type="String">Base_Unit</Data></Cell>
+    <Cell><Data ss:Type="String">Conversion_Rate</Data></Cell>
+    <Cell><Data ss:Type="String">Status</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">UOM-01</Data></Cell>
+    <Cell><Data ss:Type="String">pcs</Data></Cell>
+    <Cell><Data ss:Type="String">Pieces</Data></Cell>
+    <Cell><Data ss:Type="String">Quantity</Data></Cell>
+    <Cell><Data ss:Type="String">TRUE</Data></Cell>
+    <Cell><Data ss:Type="String">pcs</Data></Cell>
+    <Cell><Data ss:Type="Number">1.0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">UOM-02</Data></Cell>
+    <Cell><Data ss:Type="String">dozen</Data></Cell>
+    <Cell><Data ss:Type="String">Dozen</Data></Cell>
+    <Cell><Data ss:Type="String">Quantity</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">pcs</Data></Cell>
+    <Cell><Data ss:Type="Number">12.0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">UOM-03</Data></Cell>
+    <Cell><Data ss:Type="String">half-dozen</Data></Cell>
+    <Cell><Data ss:Type="String">Half Dozen</Data></Cell>
+    <Cell><Data ss:Type="String">Quantity</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">pcs</Data></Cell>
+    <Cell><Data ss:Type="Number">6.0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">UOM-04</Data></Cell>
+    <Cell><Data ss:Type="String">sets</Data></Cell>
+    <Cell><Data ss:Type="String">Single Set</Data></Cell>
+    <Cell><Data ss:Type="String">Quantity</Data></Cell>
+    <Cell><Data ss:Type="String">TRUE</Data></Cell>
+    <Cell><Data ss:Type="String">sets</Data></Cell>
+    <Cell><Data ss:Type="Number">1.0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">UOM-05</Data></Cell>
+    <Cell><Data ss:Type="String">2 sets</Data></Cell>
+    <Cell><Data ss:Type="String">2 Sets Pack</Data></Cell>
+    <Cell><Data ss:Type="String">Quantity</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">sets</Data></Cell>
+    <Cell><Data ss:Type="Number">2.0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">UOM-06</Data></Cell>
+    <Cell><Data ss:Type="String">4 sets</Data></Cell>
+    <Cell><Data ss:Type="String">4 Sets Pack</Data></Cell>
+    <Cell><Data ss:Type="String">Quantity</Data></Cell>
+    <Cell><Data ss:Type="String">FALSE</Data></Cell>
+    <Cell><Data ss:Type="String">sets</Data></Cell>
+    <Cell><Data ss:Type="Number">4.0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">UOM-07</Data></Cell>
+    <Cell><Data ss:Type="String">kg</Data></Cell>
+    <Cell><Data ss:Type="String">Kilogram</Data></Cell>
+    <Cell><Data ss:Type="String">Weight</Data></Cell>
+    <Cell><Data ss:Type="String">TRUE</Data></Cell>
+    <Cell><Data ss:Type="String">kg</Data></Cell>
+    <Cell><Data ss:Type="Number">1.0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">UOM-08</Data></Cell>
+    <Cell><Data ss:Type="String">g</Data></Cell>
+    <Cell><Data ss:Type="String">Gram</Data></Cell>
+    <Cell><Data ss:Type="String">Weight</Data></Cell>
+    <Cell><Data ss:Type="String">TRUE</Data></Cell>
+    <Cell><Data ss:Type="String">g</Data></Cell>
+    <Cell><Data ss:Type="Number">1.0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">UOM-09</Data></Cell>
+    <Cell><Data ss:Type="String">l</Data></Cell>
+    <Cell><Data ss:Type="String">Litre</Data></Cell>
+    <Cell><Data ss:Type="String">Volume</Data></Cell>
+    <Cell><Data ss:Type="String">TRUE</Data></Cell>
+    <Cell><Data ss:Type="String">l</Data></Cell>
+    <Cell><Data ss:Type="Number">1.0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">UOM-10</Data></Cell>
+    <Cell><Data ss:Type="String">ml</Data></Cell>
+    <Cell><Data ss:Type="String">Millilitre</Data></Cell>
+    <Cell><Data ss:Type="String">Volume</Data></Cell>
+    <Cell><Data ss:Type="String">TRUE</Data></Cell>
+    <Cell><Data ss:Type="String">ml</Data></Cell>
+    <Cell><Data ss:Type="Number">1.0</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+
+ <Worksheet ss:Name="Categories_and_SubCategories">
+  <Table>
+   <Row ss:StyleID="HeaderStyle">
+    <Cell><Data ss:Type="String">Category_Code</Data></Cell>
+    <Cell><Data ss:Type="String">Category_Name</Data></Cell>
+    <Cell><Data ss:Type="String">Sub_Category_Code</Data></Cell>
+    <Cell><Data ss:Type="String">Sub_Category_Name</Data></Cell>
+    <Cell><Data ss:Type="String">Department</Data></Cell>
+    <Cell><Data ss:Type="String">Status</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">CAT-01</Data></Cell>
+    <Cell><Data ss:Type="String">Grocery</Data></Cell>
+    <Cell><Data ss:Type="String">SUB-01</Data></Cell>
+    <Cell><Data ss:Type="String">Food Grains</Data></Cell>
+    <Cell><Data ss:Type="String">FMCG</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">CAT-01</Data></Cell>
+    <Cell><Data ss:Type="String">Grocery</Data></Cell>
+    <Cell><Data ss:Type="String">SUB-02</Data></Cell>
+    <Cell><Data ss:Type="String">Spices &amp; Masalas</Data></Cell>
+    <Cell><Data ss:Type="String">FMCG</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">CAT-01</Data></Cell>
+    <Cell><Data ss:Type="String">Grocery</Data></Cell>
+    <Cell><Data ss:Type="String">SUB-03</Data></Cell>
+    <Cell><Data ss:Type="String">Edible Oils</Data></Cell>
+    <Cell><Data ss:Type="String">FMCG</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">CAT-02</Data></Cell>
+    <Cell><Data ss:Type="String">Beverages</Data></Cell>
+    <Cell><Data ss:Type="String">SUB-04</Data></Cell>
+    <Cell><Data ss:Type="String">Carbonated Drinks</Data></Cell>
+    <Cell><Data ss:Type="String">Beverages</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">CAT-03</Data></Cell>
+    <Cell><Data ss:Type="String">Snacks &amp; Foods</Data></Cell>
+    <Cell><Data ss:Type="String">SUB-05</Data></Cell>
+    <Cell><Data ss:Type="String">Chocolates</Data></Cell>
+    <Cell><Data ss:Type="String">Confectionery</Data></Cell>
+    <Cell><Data ss:Type="String">ACTIVE</Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+</Workbook>

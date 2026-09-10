@@ -1,0 +1,12 @@
+Variant_Code,Variant_Name,Variant_Group,Status
+VAR-01,5kg Pack,Packaging Size,ACTIVE
+VAR-02,1g Blister,Net Weight,ACTIVE
+VAR-03,1 Litre Bottle,Liquid Volume,ACTIVE
+VAR-04,300ml Can,Liquid Volume,ACTIVE
+VAR-05,150g Bar,Net Weight,ACTIVE
+VAR-06,12 Pack Tray,Quantity Pack,ACTIVE
+VAR-07,6 Pack Box,Quantity Pack,ACTIVE
+VAR-08,18 Pcs Set,Combo Set,ACTIVE
+VAR-09,2-Pack Cover,Combo Set,ACTIVE
+VAR-10,4 Towels Pack,Combo Set,ACTIVE
+VAR-11,Stainless,Material,ACTIVE

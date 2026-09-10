@@ -1,0 +1,12 @@
+Category_Code,Category_Name,Sub_Category_Code,Sub_Category_Name,Department,Description,Status
+CAT-01,Grocery,SUB-01,Food Grains,FMCG,"Rice, pulses, wheat, grains",ACTIVE
+CAT-01,Grocery,SUB-02,Spices & Masalas,FMCG,"Whole, ground, and blended spices",ACTIVE
+CAT-01,Grocery,SUB-03,Edible Oils,FMCG,"Cooking oils, refined oils, ghee",ACTIVE
+CAT-02,Beverages,SUB-04,Carbonated Drinks,Beverages,"Aerated drinks, sodas, tonics",ACTIVE
+CAT-03,Snacks & Foods,SUB-05,Chocolates,Confectionery,"Chocolates, candies, toffees",ACTIVE
+CAT-04,Dairy & Eggs,SUB-06,Fresh Eggs,Perishables,"Poultry, farm eggs, quail eggs",ACTIVE
+CAT-05,Bakery,SUB-07,Pastries & Cakes,Fresh Foods,"Fresh baked cakes, brownies, muffins",ACTIVE
+CAT-06,Home & Kitchen,SUB-08,Crockery,Non-Food,"Dinnerware, ceramic, glassware",ACTIVE
+CAT-06,Home & Kitchen,SUB-09,Cutlery,Non-Food,"Spoons, knives, forks, serving tools",ACTIVE
+CAT-07,Home & Living,SUB-10,Bed Linen,General,"Bed sheets, duvet covers, pillowcases",ACTIVE
+CAT-07,Home & Living,SUB-11,Bath Linen,General,"Towels, hand towels, bath mats",ACTIVE

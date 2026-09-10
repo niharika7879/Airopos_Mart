@@ -1,0 +1,11 @@
+UOM_Code,Symbol,Name,Uom_Type,Is_Base_Unit,Base_Unit,Conversion_Rate,Explanation,Status
+UOM-01,pcs,Pieces,Quantity,TRUE,pcs,1.0,Base unit for single individual pieces,ACTIVE
+UOM-02,dozen,Dozen,Quantity,FALSE,pcs,12.0,1 Dozen = 12 Pieces,ACTIVE
+UOM-03,half-dozen,Half Dozen,Quantity,FALSE,pcs,6.0,1 Half Dozen = 6 Pieces,ACTIVE
+UOM-04,sets,Single Set,Quantity,TRUE,sets,1.0,Base unit for a complete set/kit,ACTIVE
+UOM-05,2 sets,2 Sets Pack,Quantity,FALSE,sets,2.0,1 Twin Pack = 2 Sets,ACTIVE
+UOM-06,4 sets,4 Sets Pack,Quantity,FALSE,sets,4.0,1 Quad Pack = 4 Sets,ACTIVE
+UOM-07,kg,Kilogram,Weight,TRUE,kg,1.0,Base unit of weight in AIroPOS,ACTIVE
+UOM-08,g,Gram,Weight,TRUE,g,1.0,Standalone unit for gram-packaged items,ACTIVE
+UOM-09,l,Litre,Volume,TRUE,l,1.0,Base unit of volume in AIroPOS,ACTIVE
+UOM-10,ml,Millilitre,Volume,TRUE,ml,1.0,Standalone unit for ml-packaged items,ACTIVE

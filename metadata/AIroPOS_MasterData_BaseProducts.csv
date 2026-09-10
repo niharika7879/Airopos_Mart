@@ -1,0 +1,12 @@
+Base_Product_Code,Base_Product_Name,Category_Name,Sub_Category_Name,Default_Tax_Rate,Description,Status
+BP-001,Basmati Rice Premium,Grocery,Food Grains,0%,Long-grain aged basmati rice,ACTIVE
+BP-002,Kashmir Saffron,Grocery,Spices & Masalas,5%,Pure Kashmiri mongra saffron,ACTIVE
+BP-003,Coconut Cooking Oil,Grocery,Edible Oils,5%,100% pure filtered coconut oil,ACTIVE
+BP-004,Sparkling Club Soda,Beverages,Carbonated Drinks,28%,Carbonated extra-fizz soda,ACTIVE
+BP-005,Dairy Milk Silk,Snacks & Foods,Chocolates,18%,Smooth milk chocolate,ACTIVE
+BP-006,Farm Fresh Eggs,Dairy & Eggs,Fresh Eggs,0%,Farm fresh antibiotic-free eggs,ACTIVE
+BP-007,Gourmet Cupcakes,Bakery,Pastries & Cakes,18%,Assorted vanilla & chocolate cupcakes,ACTIVE
+BP-008,Opalware Dinner Set,Home & Kitchen,Crockery,12%,Scratch-resistant dinner set,ACTIVE
+BP-009,Pillow Covers Pair,Home & Living,Bed Linen,12%,100% cotton pillow covers,ACTIVE
+BP-010,Luxury Bath Towel Set,Home & Living,Bath Linen,12%,Super absorbent combed cotton towels,ACTIVE
+BP-011,Promo Steel Spoon,Home & Kitchen,Cutlery,0%,Stainless steel promotional cutlery,ACTIVE
