@@ -1,4 +1,4 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../pages/LoginPage.js';
 import { MasterDataSkuPage } from '../../pages/MasterDataSkuPage.js';
 import { RateCardPage } from '../../pages/RateCardPage.js';
@@ -70,10 +70,13 @@ test.describe('Rate Card - View and Edit Existing Scenarios', () => {
     await expect(rateCardPage.modalTitle).toContainText(/edit rate card/i);
     await expect(rateCardPage.saveBtn).toContainText(/update rate card/i);
 
+    // Allow backend calculation debounce to settle
+    await page.waitForTimeout(500);
+
     // Update batch number with a unique tag
     const updatedBatch = `U${Date.now().toString().slice(-5)}`;
-    await rateCardPage.batchNoInput.click();
     await rateCardPage.batchNoInput.fill(updatedBatch);
+    await page.waitForTimeout(300);
 
     // Save update
     await rateCardPage.clickSaveRateCard();

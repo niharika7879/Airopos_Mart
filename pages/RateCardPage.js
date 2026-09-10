@@ -169,6 +169,7 @@ export class RateCardPage {
     const viewBtn = this.priceTableRows.first().locator('button[title="View"], button:has(.mdi-eye)');
     await viewBtn.click();
     await this.modal.waitFor({ state: 'visible', timeout: 8000 });
+    await expect(this.basicPriceInput).not.toHaveValue('', { timeout: 10000 });
   }
 
   /**
@@ -179,6 +180,7 @@ export class RateCardPage {
     const editBtn = this.priceTableRows.first().locator('button[title="Edit"], button:has(.mdi-pencil)');
     await editBtn.click();
     await this.modal.waitFor({ state: 'visible', timeout: 8000 });
+    await expect(this.basicPriceInput).not.toHaveValue('', { timeout: 10000 });
   }
 
   /**
