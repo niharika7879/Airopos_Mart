@@ -18,22 +18,33 @@ test.describe('Rate Card - View and Edit Existing Scenarios', () => {
     await rateCardPage.openFirstSkuForEdit();
   });
 
-  test('should open existing rate card in view-only mode and allow closing', async ({ page }) => {
-    // Check if at least one rate card exists in table
-    const hasRows = (await rateCardPage.priceTableRows.count()) > 0;
+  async function ensureRateCardExists(page, rateCardPage) {
+    let hasRows = false;
+    try {
+      await rateCardPage.priceTableRows.first().waitFor({ state: 'visible', timeout: 3000 });
+      hasRows = true;
+    } catch {
+      hasRows = false;
+    }
+
     if (!hasRows) {
-      // Create one rate card first if empty
       await rateCardPage.openAddRateCardModal();
+      const randomOffset = Math.floor(Math.random() * 800) + 30;
       await rateCardPage.fillRateCard({
-        basicPrice: '100',
-        wPrice: '110',
-        retailPrice: '120',
-        mrp: '130',
-        batchNo: `B${Date.now().toString().slice(-4)}`,
+        basicPrice: String(100 + randomOffset),
+        wPrice: String(110 + randomOffset),
+        retailPrice: String(120 + randomOffset),
+        mrp: String(130 + randomOffset),
+        batchNo: `B${Date.now().toString().slice(-6)}`,
       });
       await rateCardPage.clickSaveRateCard();
-      await rateCardPage.modal.waitFor({ state: 'hidden', timeout: 10000 });
+      await rateCardPage.modal.waitFor({ state: 'hidden', timeout: 15000 });
+      await rateCardPage.priceTableRows.first().waitFor({ state: 'visible', timeout: 10000 });
     }
+  }
+
+  test('should open existing rate card in view-only mode and allow closing', async ({ page }) => {
+    await ensureRateCardExists(page, rateCardPage);
 
     // View the rate card
     await rateCardPage.clickViewFirstRateCard();
@@ -48,20 +59,7 @@ test.describe('Rate Card - View and Edit Existing Scenarios', () => {
   });
 
   test('should open existing rate card in edit mode and allow updating details', async ({ page }) => {
-    // Check if at least one rate card exists in table
-    const hasRows = (await rateCardPage.priceTableRows.count()) > 0;
-    if (!hasRows) {
-      await rateCardPage.openAddRateCardModal();
-      await rateCardPage.fillRateCard({
-        basicPrice: '100',
-        wPrice: '110',
-        retailPrice: '120',
-        mrp: '130',
-        batchNo: `B${Date.now().toString().slice(-4)}`,
-      });
-      await rateCardPage.clickSaveRateCard();
-      await rateCardPage.modal.waitFor({ state: 'hidden', timeout: 10000 });
-    }
+    await ensureRateCardExists(page, rateCardPage);
 
     // Edit the rate card
     await rateCardPage.clickEditFirstRateCard();
@@ -74,7 +72,7 @@ test.describe('Rate Card - View and Edit Existing Scenarios', () => {
     await page.waitForTimeout(500);
 
     // Update batch number with a unique tag
-    const updatedBatch = `U${Date.now().toString().slice(-5)}`;
+    const updatedBatch = `U${Date.now().toString().slice(-6)}`;
     await rateCardPage.batchNoInput.fill(updatedBatch);
     await page.waitForTimeout(300);
 
