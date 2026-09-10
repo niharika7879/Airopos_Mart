@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage.js';
-import { MasterDataSkuPage } from '../pages/MasterDataSkuPage.js';
+﻿import { test, expect } from '@playwright/test';
+import { LoginPage } from '../../pages/LoginPage.js';
+import { MasterDataSkuPage } from '../../pages/MasterDataSkuPage.js';
 
 test.describe('Master Data - Barcode Auto-Generation Scenario', () => {
   test('should auto-generate barcode when clicking Generate button', async ({ page }) => {

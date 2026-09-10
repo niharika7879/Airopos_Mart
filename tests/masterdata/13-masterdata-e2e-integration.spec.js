@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage.js';
-import { MasterDataSkuPage } from '../pages/MasterDataSkuPage.js';
+﻿import { test, expect } from '@playwright/test';
+import { LoginPage } from '../../pages/LoginPage.js';
+import { MasterDataSkuPage } from '../../pages/MasterDataSkuPage.js';
 
 test.describe('Master Data - End-to-End Cross-Module Integration Flow', () => {
   test('should create a new Brand and immediately use it to create an SKU', async ({ page }) => {

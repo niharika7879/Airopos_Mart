@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage.js';
-import { MasterDataSkuPage } from '../pages/MasterDataSkuPage.js';
+﻿import { test, expect } from '@playwright/test';
+import { LoginPage } from '../../pages/LoginPage.js';
+import { MasterDataSkuPage } from '../../pages/MasterDataSkuPage.js';
 
 test.describe('Master Data - Brand Module Scenarios', () => {
   test.beforeEach(async ({ page }) => {

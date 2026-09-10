@@ -4,9 +4,12 @@
   "description": "",
   "scripts": {
     "test": "playwright test",
+    "test:masterdata": "playwright test tests/masterdata/",
+    "test:ratecard": "playwright test tests/ratecard/",
+    "test:common": "playwright test tests/common/",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
-    "test:sku": "playwright test tests/01-create-sku.spec.js --headed",
+    "test:sku": "playwright test tests/masterdata/01-create-sku.spec.js --headed",
     "test:report": "playwright show-report"
   },
   "keywords": [],

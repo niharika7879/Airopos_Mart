@@ -1,5 +1,5 @@
-import { test as setup } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage.js';
+﻿import { test as setup } from '@playwright/test';
+import { LoginPage } from '../../pages/LoginPage.js';
 import fs from 'fs';
 import path from 'path';
 
