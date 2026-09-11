@@ -1,4 +1,4 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../pages/LoginPage.js';
 import { MasterDataSkuPage } from '../../pages/MasterDataSkuPage.js';
 
@@ -15,7 +15,8 @@ test.describe('Master Data - Category & Sub Category Module Scenarios', () => {
     const skuPage = new MasterDataSkuPage(page);
     await skuPage.switchTab('Category');
 
-    const addCategoryBtn = page.getByRole('button', { name: /add category/i });
+    const addCategoryBtn = page.getByRole('button', { name: /add category/i }).or(page.locator('button:has-text("Add Category")'));
+    await addCategoryBtn.waitFor({ state: 'visible', timeout: 15000 });
     await addCategoryBtn.click();
 
     // Click Save on empty side panel
@@ -44,7 +45,8 @@ test.describe('Master Data - Category & Sub Category Module Scenarios', () => {
     }
     const uniqueCat = 'Cat' + randomLetters;
 
-    const addCategoryBtn = page.getByRole('button', { name: /add category/i });
+    const addCategoryBtn = page.getByRole('button', { name: /add category/i }).or(page.locator('button:has-text("Add Category")'));
+    await addCategoryBtn.waitFor({ state: 'visible', timeout: 15000 });
     await addCategoryBtn.click();
 
     const nameInput = page.locator('.side-panel input[placeholder*="name" i], .side-panel input[type="text"]').first();

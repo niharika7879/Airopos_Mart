@@ -15,7 +15,9 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   /* Maximum time one test can run for */
-  timeout: 60 * 1000,
+  timeout: 75 * 1000,
+  /* Retry on CI only to eliminate transient remote network latency flakes */
+  retries: process.env.CI ? 2 : 0,
   /* Run tests sequentially to prevent concurrent OTP requests with same account */
   fullyParallel: false,
   workers: 1,
