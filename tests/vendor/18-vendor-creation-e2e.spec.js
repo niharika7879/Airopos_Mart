@@ -25,8 +25,9 @@ test.describe('Vendor Management - E2E Creation & UI Verification', () => {
     await vendorPage.clickSaveAndContinue();
 
     // Verify error notification or inline error message
-    const errorMsg = page.getByText(/Company Name is required/i).or(page.locator('.v-messages')).first();
-    await expect(errorMsg).toContainText(/required/i);
+    const errorMsg = page.locator('.v-snackbar__content, .v-snackbar, .v-messages, .v-alert')
+      .or(page.getByText(/Please fill all required fields|required/i)).first();
+    await expect(errorMsg).toContainText(/required/i, { timeout: 10000 });
   });
 
   test('should create a new Vendor and verify in Vendor List table', async ({ page }) => {

@@ -62,13 +62,13 @@ export class VendorPage {
     if (businessType) {
       const bTypeGroup = this.page.locator('.field-group').filter({ hasText: /business type/i });
       if (await bTypeGroup.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await bTypeGroup.scrollIntoViewIfNeeded();
         await bTypeGroup.locator('.v-select, input, .v-field').first().click();
-        await this.page.waitForTimeout(500);
-        const option = this.page.locator('.v-overlay .v-list-item').filter({ hasText: new RegExp(businessType, 'i') }).first();
-        if (await option.isVisible({ timeout: 2000 }).catch(() => false)) {
-          await option.click();
-        } else {
-          await this.page.locator('.v-overlay .v-list-item').first().click();
+        await this.page.waitForTimeout(400);
+        const option = this.page.locator('.v-overlay:visible .v-list-item').filter({ hasText: new RegExp(businessType, 'i') }).first()
+          .or(this.page.locator('.v-overlay:visible .v-list-item').first());
+        if (await option.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await option.click({ force: true });
         }
         await this.page.waitForTimeout(300);
       }
@@ -78,13 +78,13 @@ export class VendorPage {
     if (vendorType) {
       const vTypeGroup = this.page.locator('.field-group').filter({ hasText: /vendor type/i });
       if (await vTypeGroup.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await vTypeGroup.scrollIntoViewIfNeeded();
         await vTypeGroup.locator('.v-select, input, .v-field').first().click();
-        await this.page.waitForTimeout(500);
-        const option = this.page.locator('.v-overlay .v-list-item').filter({ hasText: new RegExp(vendorType, 'i') }).first();
-        if (await option.isVisible({ timeout: 2000 }).catch(() => false)) {
-          await option.click();
-        } else {
-          await this.page.locator('.v-overlay .v-list-item').first().click();
+        await this.page.waitForTimeout(400);
+        const option = this.page.locator('.v-overlay:visible .v-list-item').filter({ hasText: new RegExp(vendorType, 'i') }).first()
+          .or(this.page.locator('.v-overlay:visible .v-list-item').first());
+        if (await option.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await option.click({ force: true });
         }
         await this.page.waitForTimeout(300);
       }

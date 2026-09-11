@@ -55,9 +55,10 @@ test.describe('Master Data - Category & Sub Category Module Scenarios', () => {
 
     const saveBtn = page.locator('.side-panel .save-btn, .side-panel button:has-text("Save")').first();
     await saveBtn.click();
+    await page.locator('.side-panel').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
 
     // Search and verify
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(1000);
     const searchInput = page.getByRole('textbox', { name: /search/i }).or(page.getByPlaceholder(/search/i)).first();
     await searchInput.fill(uniqueCat);
     await page.waitForTimeout(1500);
