@@ -47,14 +47,18 @@ export class StockEntryPage {
   }
 
   async selectVendor(vendorName) {
+    await this.vendorInput.waitFor({ state: 'visible', timeout: 15000 });
+    // Wait for any async dropdown loading to settle
+    await this.page.waitForSelector('.v-autocomplete--loading', { state: 'detached', timeout: 10000 }).catch(() => {});
+
     await this.vendorInput.click();
     await this.vendorInput.fill(vendorName || '');
     await this.page.waitForTimeout(600);
-    const option = this.page.locator('.v-overlay .v-list-item').first();
-    if (await option.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await option.click();
-      await this.page.waitForTimeout(400);
-    }
+
+    const option = this.page.locator('.v-overlay:visible .v-list-item').first();
+    await option.waitFor({ state: 'visible', timeout: 10000 });
+    await option.click();
+    await this.page.waitForTimeout(600);
   }
 
   async fillInvoiceDetails({ invoiceNumber, eWayBill, poNumber }) {
@@ -64,9 +68,17 @@ export class StockEntryPage {
   }
 
   async addProductByBarcode(barcode, invoiceQty = '10', receivedQty = '10') {
+    await this.productSkuInput.waitFor({ state: 'visible', timeout: 15000 });
     await this.productSkuInput.fill(barcode);
     await this.productSkuInput.press('Enter');
-    await this.page.waitForTimeout(1500);
+
+    // Wait for the product table row to load and display product name
+    const row = this.page.locator('.product-table tbody tr').first();
+    await row.waitFor({ state: 'visible', timeout: 10000 });
+
+    // Wait until the product row td:nth-child(4) input (Product Name) is populated from backend
+    const prodNameInput = row.locator('td:nth-child(4) input');
+    await expect(prodNameInput).not.toHaveValue('', { timeout: 15000 });
 
     // If Rate card dialog appears asking to create rate card, click Skip
     const skipBtn = this.page.locator('button:has-text("Skip for Now")');
@@ -75,16 +87,21 @@ export class StockEntryPage {
       await this.page.waitForTimeout(500);
     }
 
-    const row = this.page.locator('.product-table tbody tr').first();
     const invQtyInput = row.locator('td:nth-child(6) input');
-    if (await invQtyInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+    if (await invQtyInput.isVisible({ timeout: 5000 }).catch(() => false)) {
       await invQtyInput.fill(invoiceQty);
+      await invQtyInput.dispatchEvent('input');
+      await invQtyInput.dispatchEvent('change');
     }
 
     const recQtyInput = row.locator('td:nth-child(7) input');
-    if (await recQtyInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+    if (await recQtyInput.isVisible({ timeout: 5000 }).catch(() => false)) {
       await recQtyInput.fill(receivedQty);
+      await recQtyInput.dispatchEvent('input');
+      await recQtyInput.dispatchEvent('change');
     }
+
+    await this.page.waitForTimeout(800);
   }
 
   async clickSaveChanges() {
@@ -94,8 +111,15 @@ export class StockEntryPage {
   }
 
   async confirmAndSubmit() {
-    const dialog = this.page.locator('.v-dialog').first();
-    await dialog.waitFor({ state: 'visible', timeout: 10000 });
+    // If validation error snackbar appears, log it
+    const toast = this.page.locator('.v-snackbar__content:visible');
+    if (await toast.isVisible({ timeout: 2000 }).catch(() => false)) {
+      const txt = await toast.innerText().catch(() => '');
+      console.warn('Form validation warning before confirmation dialog:', txt);
+    }
+
+    const dialog = this.page.locator('.v-dialog:visible').first();
+    await dialog.waitFor({ state: 'visible', timeout: 15000 });
     const submitBtn = dialog.locator('button:has-text("Submit")').first();
     await submitBtn.waitFor({ state: 'visible', timeout: 5000 });
     await submitBtn.click();
@@ -105,6 +129,14 @@ export class StockEntryPage {
   async verifyStockEntryInTable(invoiceNumber) {
     await this.navigateToStockEntry();
     await this.page.waitForTimeout(1000);
+
+    // Search for the invoice number if search input is available to ensure it's found across pages
+    const searchInput = this.page.locator('.controls-section input[type="text"]').or(this.page.getByPlaceholder(/search/i)).first();
+    if (await searchInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await searchInput.fill(invoiceNumber);
+      await this.page.waitForTimeout(1000);
+    }
+
     const row = this.stockEntryTable.locator('tr').filter({ hasText: invoiceNumber }).first();
     await expect(row).toBeVisible({ timeout: 15000 });
     await expect(row).toContainText(/COMPLETED/i);

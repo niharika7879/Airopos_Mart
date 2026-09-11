@@ -51,6 +51,10 @@ test.describe('Vendor Management - E2E Creation & UI Verification', () => {
 
     // Return to Vendor List and verify created record
     await vendorPage.navigateToVendorList();
-    await expect(vendorPage.vendorTable).toContainText(email, { timeout: 15000 });
+    if (await vendorPage.searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await vendorPage.searchInput.fill(displayName);
+      await page.waitForTimeout(1000);
+    }
+    await expect(vendorPage.vendorTable).toContainText(displayName, { timeout: 15000 });
   });
 });
