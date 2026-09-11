@@ -10,6 +10,9 @@ Barcode,Base_Product_Name,Category,Sub_Category,Brand_Name,Manufacturer_Name,Var
 8907000333022,Pillow Covers Pair,Home & Living,Bed Linen,Bombay Dyeing,Bombay Dyeing & Mfg Co,2-Pack Cover,2 sets,1,63049200,12,0,0,ACTIVE,FALSE,Explicit_Zero_StopOrder,SUCCESS
 8907000333033,Luxury Bath Towel Set,Home & Living,Bath Linen,Trident,Trident Limited,4 Towels Pack,4 sets,1,63026000,12,0,4,ACTIVE,FALSE,Valid_4_sets,SUCCESS
 8909990001114,Promo Steel Spoon,Home & Kitchen,Cutlery,AIroPOS Promo,InHouse Merchandise,Stainless,pcs,1,82159900,0,0,0,ACTIVE,TRUE,Free_Promo_Item,SUCCESS
+8901112223340,Atta Without HSN,Grocery,Food Grains,Daawat,LT Foods Ltd,5kg Pack,kg,1,,0,0,5,ACTIVE,FALSE,Negative_MissingHsnCode,FAIL_VALIDATION
+8901112223341,Atta With Alpha HSN,Grocery,Food Grains,Daawat,LT Foods Ltd,5kg Pack,kg,1,1006AB20,0,0,5,ACTIVE,FALSE,Negative_AlphaHsnCode,FAIL_VALIDATION
+8901112223342,Atta Long HSN,Grocery,Food Grains,Daawat,LT Foods Ltd,5kg Pack,kg,1,1006302099,0,0,5,ACTIVE,FALSE,Negative_LongHsnCode,FAIL_VALIDATION
 8906014640011,Duplicate Rice Barcode,Grocery,Food Grains,Daawat,LT Foods Ltd,5kg Pack,kg,1,10063020,0,0,5,ACTIVE,FALSE,Negative_DuplicateBarcode,FAIL_CONFLICT
 8901112223334,,Grocery,Food Grains,Generic,Generic Supply,1 Pack,pcs,1,10063020,0,0,5,ACTIVE,FALSE,Negative_MissingBaseProduct,FAIL_VALIDATION
 8901112223335,Instant Soup,,,Knorr,HUL Ltd,50g Pouch,pcs,1,21041000,18,0,0,ACTIVE,FALSE,Negative_MissingCategory,FAIL_VALIDATION
