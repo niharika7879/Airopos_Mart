@@ -31,7 +31,7 @@ export class MasterDataSkuPage {
     this.manufacturerInput = page.locator('.form-group').filter({ hasText: /Manufacturer/i }).locator('input').first();
 
     // HSN & Tax
-    this.hsnCodeInput = page.getByRole('textbox', { name: 'Enter HSN Code' }).or(page.locator('input[placeholder*="HSN"]')).first();
+    this.hsnCodeInput = page.locator('.hsn-code-input input, .form-group:has-text("HSN Code") input, input[placeholder*="HSN"]').first();
     this.taxSelect = page.locator('.tax-select, .form-group:has-text("Tax") .v-select, input[placeholder*="Tax"]').first();
 
     // Inventory Quantities
@@ -103,6 +103,23 @@ export class MasterDataSkuPage {
   }
 
   /**
+   * Search and select an HSN code from the HSN Master autocomplete dropdown
+   * @param {string} query Search text (at least 2 chars to trigger master search)
+   * @param {string} [expectedCode] Specific HSN code to pick from results
+   */
+  async selectHsnFromMaster(query, expectedCode = '') {
+    await this.hsnCodeInput.fill(query);
+    await this.page.waitForTimeout(500); // Wait for debounce and API response
+    const target = expectedCode || query;
+    const option = this.page.locator('.v-overlay-container .v-list-item')
+      .filter({ hasText: target })
+      .first();
+    await option.waitFor({ state: 'visible', timeout: 6000 });
+    await option.click();
+    await this.page.waitForTimeout(300);
+  }
+
+  /**
    * Fill out the Add SKU form with provided parameters
    */
   async fillSkuDetails({
@@ -159,11 +176,20 @@ export class MasterDataSkuPage {
     // 7. HSN Code
     if (hsnCode) {
       await this.hsnCodeInput.fill(hsnCode);
+      await this.page.waitForTimeout(400);
+      const hsnDropdownItem = this.page.locator('.v-overlay-container .v-list-item').first();
+      if (await hsnDropdownItem.isVisible({ timeout: 1500 }).catch(() => false)) {
+        await hsnDropdownItem.click().catch(() => {});
+      }
     }
 
     // 8. Tax %
     if (tax) {
-      await this.selectOption(this.taxSelect, tax);
+      const isTaxDisabled = (await this.taxSelect.getAttribute('class').catch(() => '')).includes('v-input--disabled') ||
+                            (await this.taxSelect.locator('input').isDisabled().catch(() => false));
+      if (!isTaxDisabled) {
+        await this.selectOption(this.taxSelect, tax);
+      }
     }
 
     // 9. Reorder & Stop Order

@@ -1,9 +1,9 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../pages/LoginPage.js';
 import { MasterDataSkuPage } from '../../pages/MasterDataSkuPage.js';
 
 test.describe('Master Data - Tab Navigation Scenarios', () => {
-  test('should display all 10 tabs and allow navigation between them', async ({ page }) => {
+  test('should display all 11 tabs and allow navigation between them', async ({ page }) => {
     const loginPage = new LoginPage(page);
     const skuPage = new MasterDataSkuPage(page);
 
@@ -22,6 +22,7 @@ test.describe('Master Data - Tab Navigation Scenarios', () => {
       'Manufacturer',
       'BOM Config',
       'Code Config',
+      'HSN/SAC Master',
     ];
 
     // Verify all tabs are visible
@@ -35,6 +36,11 @@ test.describe('Master Data - Tab Navigation Scenarios', () => {
     await skuPage.switchTab('Base Product');
     const baseProductTab = page.locator('.master-data-tabs .tab-item.active, .tab-navigation .tab-item.active');
     await expect(baseProductTab.first()).toContainText('Base Product');
+
+    // Switch to HSN/SAC Master tab
+    await skuPage.switchTab('HSN/SAC Master');
+    const hsnTab = page.locator('.master-data-tabs .tab-item.active, .tab-navigation .tab-item.active');
+    await expect(hsnTab.first()).toContainText('HSN/SAC Master');
 
     // Switch back to SKU tab
     await skuPage.switchTab('SKU');
