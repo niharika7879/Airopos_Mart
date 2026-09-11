@@ -1,0 +1,9 @@
+Test_ID,Company_Name,Display_Name,Vendor_Type,Phone,Email,GSTIN,Status,Scenario / Test Type,Expected_Result
+TC-VND-01,Balaji Wholesale Traders Pvt Ltd,Balaji Traders,Wholesale,9876543210,balaji@traders.com,27AABCU9603R1ZM,ACTIVE,Valid Registered Vendor,SUCCESS
+TC-VND-02,Everest Spices Distributors,Everest Dist,Distributor,9812345678,orders@everestdist.com,27AAACE1234F1Z5,ACTIVE,Valid FMCG Distributor,SUCCESS
+TC-VND-03,Marico Edible Oils Agency,Marico Agency,Wholesale,9898765432,agency@marico.com,27AABCM5678K1ZP,ACTIVE,Valid Edible Oils Supplier,SUCCESS
+TC-VND-04,Metro Cash and Carry Ltd,Metro Supply,Distributor,9765432109,metro@supply.com,27AABCM9999P1ZQ,ACTIVE,Valid Enterprise Supplier,SUCCESS
+TC-VND-05,Local Farm Fresh Supplies,Local Farm,Manufacturer,9654321098,farm@fresh.com,,ACTIVE,Valid Unregistered Vendor (No GST),SUCCESS
+TC-VND-06,[EMPTY],Balaji Traders,Wholesale,9876543210,balaji@traders.com,27AABCU9603R1ZM,ACTIVE,Missing Company Name,FAIL_VALIDATION (Company Name required)
+TC-VND-07,Invalid Phone Vendor,Invalid Phone,Wholesale,12345,invalid@phone.com,27AABCU9603R1ZM,ACTIVE,Invalid Phone Format,FAIL_VALIDATION (Valid 10-digit phone required)
+TC-VND-08,Invalid GSTIN Vendor,Invalid GST,Wholesale,9876543210,invalid@gst.com,INVALIDGSTIN123,ACTIVE,Invalid GSTIN Length/Format,FAIL_VALIDATION (15-character GSTIN required)

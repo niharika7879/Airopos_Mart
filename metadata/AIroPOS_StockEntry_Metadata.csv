@@ -1,0 +1,8 @@
+Test_ID,Vendor_Name,Supplier_Invoice_No,E_Way_Bill,Barcode,Invoice_Qty,Received_Qty,Free_Qty,Status,Scenario / Test Type,Expected_Result
+TC-SE-01,Balaji Wholesale Traders Pvt Ltd,INV-2026-001,123456789012,8906014640011,50,50,0,SUCCESS,Standard Inward Full Match,SUCCESS
+TC-SE-02,Everest Spices Distributors,INV-2026-002,123456789013,8901058852210,20,20,2,SUCCESS,Inward with Free Scheme Qty,SUCCESS
+TC-SE-03,Marico Edible Oils Agency,INV-2026-003,123456789014,8901764012015,100,95,0,SUCCESS,Inward with Shortage (5 Returned),SUCCESS
+TC-SE-04,Metro Cash and Carry Ltd,INV-2026-004,123456789015,8902080005012,200,200,0,SUCCESS,High Volume Beverage Inward,SUCCESS
+TC-SE-05,[EMPTY],INV-2026-005,123456789016,8906014640011,10,10,0,FAILED,Missing Vendor Selection,FAIL_VALIDATION (Vendor Name is required)
+TC-SE-06,Balaji Wholesale Traders Pvt Ltd,[EMPTY],123456789017,8906014640011,10,10,0,FAILED,Missing Invoice Number,FAIL_VALIDATION (Invoice Number is required)
+TC-SE-07,Balaji Wholesale Traders Pvt Ltd,INV-2026-007,123456789018,8906014640011,0,0,0,FAILED,Zero Quantity Inward,FAIL_VALIDATION (Quantity must be greater than 0)
