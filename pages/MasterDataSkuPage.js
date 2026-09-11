@@ -219,11 +219,13 @@ export class MasterDataSkuPage {
    * @param {string} tabName
    */
   async switchTab(tabName) {
+    // Wait for any active modal or side panel overlay scrim to close before switching tabs
+    await this.page.locator('.v-overlay--active .v-overlay__scrim').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
     const tab = this.page.locator('.master-data-tabs .tab-item, .tab-navigation .tab-item')
       .filter({ hasText: new RegExp(`^\\s*${tabName}\\s*$`, 'i') })
       .first();
     await tab.waitFor({ state: 'visible', timeout: 8000 });
-    await tab.click();
+    await tab.click({ force: true });
     await this.page.waitForTimeout(500);
   }
 

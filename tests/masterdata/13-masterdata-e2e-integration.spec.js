@@ -1,4 +1,4 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../pages/LoginPage.js';
 import { MasterDataSkuPage } from '../../pages/MasterDataSkuPage.js';
 
@@ -30,7 +30,8 @@ test.describe('Master Data - End-to-End Cross-Module Integration Flow', () => {
 
     const saveBrandBtn = page.locator('.side-panel .save-btn, .side-panel button:has-text("Save")').first();
     await saveBrandBtn.click();
-    await page.waitForTimeout(2000);
+    await page.locator('.side-panel').waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});
+    await page.waitForTimeout(1000);
 
     // 3. Switch back to SKU tab
     await skuPage.switchTab('SKU');
