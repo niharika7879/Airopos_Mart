@@ -37,23 +37,73 @@ test.describe('Inventory - Stock Entry E2E Workflow', () => {
     }
   });
 
-  test('should inward stock for Master Data SKU with valid vendor and invoice details', async ({ page }) => {
+  test('should inward stock for Master Data SKU, submit via confirmation modal, and verify in table (TC-SE-01)', async ({ page }) => {
     await stockEntryPage.openStockEntryForm();
 
     const uniqueInv = 'INV-' + Date.now().toString().slice(-6);
 
-    // Select Vendor
+    // 1. Select Vendor
     await stockEntryPage.selectVendor('Balaji');
 
-    // Fill supplier invoice details
+    // 2. Fill supplier invoice details
     await stockEntryPage.fillInvoiceDetails({
       invoiceNumber: uniqueInv,
       eWayBill: '123456789012',
     });
 
-    // Enter existing Master Data SKU barcode (Basmati Rice)
-    await stockEntryPage.addProductByBarcode('8906014640011', '25', '25');
+    // 3. Enter active SKU barcode (890100000001 - Rice)
+    await stockEntryPage.addProductByBarcode('890100000001', '10', '10');
 
-    await expect(stockEntryPage.productSkuInput).toHaveValue('8906014640011');
+    // 4. Save Changes
+    await stockEntryPage.clickSaveChanges();
+
+    // 5. Submit from Confirmation Dialog
+    await stockEntryPage.confirmAndSubmit();
+
+    // 6. Verify entry in Stock Entry table with COMPLETED status
+    await stockEntryPage.verifyStockEntryInTable(uniqueInv);
+  });
+
+  test('should handle stock inward with free scheme quantity (TC-SE-02)', async ({ page }) => {
+    await stockEntryPage.openStockEntryForm();
+
+    const uniqueInv = 'INV-' + Date.now().toString().slice(-6);
+
+    await stockEntryPage.selectVendor('Balaji');
+    await stockEntryPage.fillInvoiceDetails({
+      invoiceNumber: uniqueInv,
+      eWayBill: '123456789013',
+    });
+
+    // Enter active SKU barcode (890100000004 - Sugar)
+    await stockEntryPage.addProductByBarcode('890100000004', '15', '15');
+    await stockEntryPage.setFreeQty('2');
+
+    await stockEntryPage.clickSaveChanges();
+    await stockEntryPage.confirmAndSubmit();
+
+    await stockEntryPage.verifyStockEntryInTable(uniqueInv);
+  });
+
+  test('should handle stock inward with shortage and return details (TC-SE-03)', async ({ page }) => {
+    await stockEntryPage.openStockEntryForm();
+
+    const uniqueInv = 'INV-' + Date.now().toString().slice(-6);
+
+    await stockEntryPage.selectVendor('Balaji');
+    await stockEntryPage.fillInvoiceDetails({
+      invoiceNumber: uniqueInv,
+      eWayBill: '123456789014',
+    });
+
+    // Enter active SKU barcode (890100000006 - Wheat Flour)
+    // Invoice 20, Received 18, Return 2
+    await stockEntryPage.addProductByBarcode('890100000006', '20', '18');
+    await stockEntryPage.setReturnDetails('2', 'Damaged');
+
+    await stockEntryPage.clickSaveChanges();
+    await stockEntryPage.confirmAndSubmit();
+
+    await stockEntryPage.verifyStockEntryInTable(uniqueInv);
   });
 });

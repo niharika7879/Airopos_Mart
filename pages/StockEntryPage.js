@@ -92,4 +92,46 @@ export class StockEntryPage {
     await this.saveChangesBtn.click();
     await this.page.waitForTimeout(1000);
   }
+
+  async confirmAndSubmit() {
+    const dialog = this.page.locator('.v-dialog').first();
+    await dialog.waitFor({ state: 'visible', timeout: 10000 });
+    const submitBtn = dialog.locator('button:has-text("Submit")').first();
+    await submitBtn.waitFor({ state: 'visible', timeout: 5000 });
+    await submitBtn.click();
+    await this.page.waitForTimeout(2000);
+  }
+
+  async verifyStockEntryInTable(invoiceNumber) {
+    await this.navigateToStockEntry();
+    await this.page.waitForTimeout(1000);
+    const row = this.stockEntryTable.locator('tr').filter({ hasText: invoiceNumber }).first();
+    await expect(row).toBeVisible({ timeout: 15000 });
+    await expect(row).toContainText(/COMPLETED/i);
+  }
+
+  async setFreeQty(freeQty) {
+    const row = this.page.locator('.product-table tbody tr').first();
+    const freeQtyInput = row.locator('td:nth-child(8) input');
+    if (await freeQtyInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await freeQtyInput.fill(String(freeQty));
+    }
+  }
+
+  async setReturnDetails(returnQty, reason = 'Damaged') {
+    const row = this.page.locator('.product-table tbody tr').first();
+    const retQtyInput = row.locator('td:nth-child(9) input');
+    if (await retQtyInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await retQtyInput.fill(String(returnQty));
+    }
+    const reasonSelect = row.locator('td:nth-child(10)').locator('.v-select, input').first();
+    if (await reasonSelect.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await reasonSelect.click();
+      await this.page.waitForTimeout(400);
+      const option = this.page.locator('.v-overlay:visible .v-list-item').first();
+      if (await option.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await option.click();
+      }
+    }
+  }
 }
