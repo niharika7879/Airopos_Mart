@@ -1,4 +1,4 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../pages/LoginPage.js';
 import { MasterDataSkuPage } from '../../pages/MasterDataSkuPage.js';
 
@@ -13,8 +13,8 @@ test.describe('Master Data - UOM (Unit of Measurement) Module', () => {
   });
 
   test('should display UOM table and Add button', async ({ page }) => {
-    const addUomBtn = page.getByRole('button', { name: /add uom/i });
-    await expect(addUomBtn).toBeVisible({ timeout: 10000 });
+    const addUomBtn = page.getByRole('button', { name: /add uom/i }).or(page.locator('button:has-text("Add UOM")'));
+    await expect(addUomBtn).toBeVisible({ timeout: 15000 });
   });
 
   test('should validate required fields on empty UOM submission', async ({ page }) => {

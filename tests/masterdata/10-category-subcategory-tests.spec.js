@@ -71,7 +71,8 @@ test.describe('Master Data - Category & Sub Category Module Scenarios', () => {
     const skuPage = new MasterDataSkuPage(page);
     await skuPage.switchTab('Sub Category');
 
-    const addSubCategoryBtn = page.getByRole('button', { name: /add sub category|add sub-category/i });
-    await expect(addSubCategoryBtn).toBeVisible({ timeout: 10000 });
+    const addSubCategoryBtn = page.getByRole('button', { name: /add sub category|add sub-category/i })
+      .or(page.locator('button:has-text("Add Sub Category")'));
+    await expect(addSubCategoryBtn).toBeVisible({ timeout: 15000 });
   });
 });

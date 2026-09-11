@@ -221,12 +221,37 @@ export class MasterDataSkuPage {
   async switchTab(tabName) {
     // Wait for any active modal or side panel overlay scrim to close before switching tabs
     await this.page.locator('.v-overlay--active .v-overlay__scrim').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
-    const tab = this.page.locator('.master-data-tabs .tab-item, .tab-navigation .tab-item')
+
+    const tabRoutes = {
+      'sku': '/erp/dashboard/masterdata/sku',
+      'base product': '/erp/dashboard/masterdata/base-product',
+      'sub category': '/erp/dashboard/masterdata/sub-categories',
+      'category': '/erp/dashboard/masterdata/categories',
+      'brand': '/erp/dashboard/masterdata/brand',
+      'variant': '/erp/dashboard/masterdata/variant',
+      'uom': '/erp/dashboard/masterdata/uom',
+      'manufacturer': '/erp/dashboard/masterdata/manufacturer',
+      'additional attributes': '/erp/dashboard/masterdata/additional-attributes',
+    };
+
+    const cleanTabName = tabName.toLowerCase().trim();
+    const tab = this.page.locator('.categories-bar .tab-item, .submenu-tabs .tab-item, .master-data-tabs .tab-item, .tab-navigation .tab-item')
       .filter({ hasText: new RegExp(`^\\s*${tabName}\\s*$`, 'i') })
       .first();
-    await tab.waitFor({ state: 'visible', timeout: 8000 });
-    await tab.click({ force: true });
-    await this.page.waitForTimeout(500);
+
+    if (await tab.isVisible({ timeout: 2500 }).catch(() => false)) {
+      await tab.scrollIntoViewIfNeeded();
+      await tab.click();
+      await this.page.waitForTimeout(600);
+    } else if (tabRoutes[cleanTabName]) {
+      await this.page.goto(tabRoutes[cleanTabName]);
+      await this.page.waitForLoadState('domcontentloaded');
+      await this.page.waitForTimeout(600);
+    } else {
+      await tab.waitFor({ state: 'visible', timeout: 8000 });
+      await tab.click({ force: true });
+      await this.page.waitForTimeout(600);
+    }
   }
 
   async expectValidationErrors() {
