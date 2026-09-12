@@ -1,0 +1,16 @@
+Test_ID,Scenario_Name,HSN_SAC_Code,Type,Category_Description,CGST_Rate,SGST_Rate,IGST_Rate,Total_GST_Rate,Cess_Rate,Digits_Count,Expected_Validation,Status
+TC-HSN-01,Exempted Essential Goods,1006,HSN,Cereals & Rice (Unbranded),0.0,0.0,0.0,0.0,0.0,4,Valid,ACTIVE
+TC-HSN-02,Nil Rated Dairy/Eggs,04072100,HSN,Fresh Poultry Eggs,0.0,0.0,0.0,0.0,0.0,8,Valid,ACTIVE
+TC-HSN-03,Low Rate Edible Groceries,09102010,HSN,Saffron / Spices retail,2.5,2.5,5.0,5.0,0.0,8,Valid,ACTIVE
+TC-HSN-04,Low Rate Cooking Oil,15131900,HSN,Refined Coconut Oil,2.5,2.5,5.0,5.0,0.0,8,Valid,ACTIVE
+TC-HSN-05,Standard Rate 12% Tableware,69111011,HSN,Ceramic & Opalware Tableware,6.0,6.0,12.0,12.0,0.0,8,Valid,ACTIVE
+TC-HSN-06,Standard Rate 12% Processed Food,20098990,HSN,Packaged Fruit Juices,6.0,6.0,12.0,12.0,0.0,8,Valid,ACTIVE
+TC-HSN-07,Standard Rate 18% Confectionery,18063200,HSN,Chocolates with Cocoa,9.0,9.0,18.0,18.0,0.0,8,Valid,ACTIVE
+TC-HSN-08,Standard Rate 18% Bakery Goods,19059010,HSN,Pastries / Cakes / Biscuits,9.0,9.0,18.0,18.0,0.0,8,Valid,ACTIVE
+TC-HSN-09,High Rate 28% Aerated Drinks,22011010,HSN,Aerated Mineral Water / Soda,14.0,14.0,28.0,28.0,12.0,8,Valid,ACTIVE
+TC-HSN-10,Service Accounting Code (SAC),998311,SAC,Freight & Logistics Services,9.0,9.0,18.0,18.0,0.0,6,Valid,ACTIVE
+TC-HSN-11,Short 2-Digit Chapter Code,10,HSN,Cereals Chapter Level,0.0,0.0,0.0,0.0,0.0,2,Valid,ACTIVE
+TC-HSN-12,Short 6-Digit Subheading Code,100630,HSN,Semi-milled or wholly milled rice,2.5,2.5,5.0,5.0,0.0,6,Valid,ACTIVE
+TC-HSN-13,Negative - Alphanumeric Code,HSN12345,HSN,Invalid Alphanumeric,0.0,0.0,0.0,0.0,0.0,8,Rejected (Numeric Only),INVALID
+TC-HSN-14,Negative - Excess Digits (>8),1006302011,HSN,Invalid Length (10 digits),0.0,0.0,0.0,0.0,0.0,10,Rejected (Max 8 Digits),INVALID
+TC-HSN-15,Negative - Blank Code,,HSN,Empty Code Validation,0.0,0.0,0.0,0.0,0.0,0,Rejected (Required Field),INVALID

@@ -17,6 +17,8 @@ jobs:
       run: npm ci
     - name: Install Playwright Chromium Browser
       run: npx playwright install chromium --with-deps
+    - name: Validate Master Metadata Import Engine
+      run: npm run dataimport
     - name: Run Playwright tests
       run: npx playwright test --project=chromium
     - uses: actions/upload-artifact@v4

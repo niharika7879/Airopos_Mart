@@ -14,7 +14,9 @@
     "test:vendor": "playwright test tests/vendor/ --project=chromium",
     "test:inventory": "playwright test tests/inventory/ --project=chromium",
     "test:sku": "playwright test tests/masterdata/01-create-sku.spec.js --project=chromium --headed",
-    "test:report": "playwright show-report"
+    "test:report": "playwright show-report",
+    "dataimport": "node dataimport.js",
+    "dataimport:dry-run": "node dataimport.js --dry-run"
   },
   "keywords": [],
   "author": "",
