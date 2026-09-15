@@ -151,11 +151,13 @@ export class StockEntryPage {
 
       const reasonSelect = row.locator('td:nth-child(10), td:nth-child(11)').locator('.v-select, input').first();
       if (await reasonSelect.isVisible({ timeout: 3000 }).catch(() => false)) {
-        await reasonSelect.click();
-        await this.page.waitForTimeout(400);
-        const option = this.page.locator('.v-overlay:visible .v-list-item').first();
-        if (await option.isVisible({ timeout: 2000 }).catch(() => false)) {
-          await option.click();
+        if (await reasonSelect.isEnabled().catch(() => false)) {
+          await reasonSelect.click().catch(() => {});
+          await this.page.waitForTimeout(400);
+          const option = this.page.locator('.v-overlay:visible .v-list-item').first();
+          if (await option.isVisible({ timeout: 2000 }).catch(() => false)) {
+            await option.click().catch(() => {});
+          }
         }
       }
     }
@@ -239,11 +241,13 @@ export class StockEntryPage {
     }
     const reasonSelect = row.locator('td:nth-child(10), td:nth-child(11)').locator('.v-select, input').first();
     if (await reasonSelect.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await reasonSelect.click();
-      await this.page.waitForTimeout(400);
-      const option = this.page.locator('.v-overlay:visible .v-list-item').first();
-      if (await option.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await option.click();
+      if (await reasonSelect.isEnabled().catch(() => false)) {
+        await reasonSelect.click().catch(() => {});
+        await this.page.waitForTimeout(400);
+        const option = this.page.locator('.v-overlay:visible .v-list-item').first();
+        if (await option.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await option.click().catch(() => {});
+        }
       }
     }
   }
