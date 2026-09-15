@@ -1,12 +1,11 @@
-// @ts-check
-const { test, expect } = require('@playwright/test');
-const fs = require('fs');
-const path = require('path');
-const { LoginPage } = require('../pages/LoginPage.js');
-const { MasterDataSkuPage } = require('../pages/MasterDataSkuPage.js');
-const { VendorPage } = require('../pages/VendorPage.js');
-const { StockEntryPage } = require('../pages/StockEntryPage.js');
-const { HsnMasterPage } = require('../pages/HsnMasterPage.js');
+import { test, expect } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
+import { LoginPage } from '../pages/LoginPage.js';
+import { MasterDataSkuPage } from '../pages/MasterDataSkuPage.js';
+import { VendorPage } from '../pages/VendorPage.js';
+import { StockEntryPage } from '../pages/StockEntryPage.js';
+import { HsnMasterPage } from '../pages/HsnMasterPage.js';
 
 // 1. Resolve CSV file dynamically from terminal environment variable or CLI
 let rawCsvPath = (process.env.CSV_FILE || process.env.METADATA_CSV_PATH || '').trim();
