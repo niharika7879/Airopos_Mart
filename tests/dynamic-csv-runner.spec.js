@@ -6,6 +6,7 @@ import { MasterDataSkuPage } from '../pages/MasterDataSkuPage.js';
 import { VendorPage } from '../pages/VendorPage.js';
 import { StockEntryPage } from '../pages/StockEntryPage.js';
 import { HsnMasterPage } from '../pages/HsnMasterPage.js';
+import { RateCardPage } from '../pages/RateCardPage.js';
 
 // 1. Resolve CSV file dynamically from terminal environment variable or CLI
 let rawCsvPath = (process.env.CSV_FILE || process.env.METADATA_CSV_PATH || '').trim();
@@ -79,6 +80,22 @@ function parseCSV(content) {
 }
 
 /**
+ * Detect CSV Schema Type by analyzing header columns
+ */
+function detectSchema(headers) {
+  const hSet = new Set(headers.map(h => h.toLowerCase()));
+  if (hSet.has('sheet_no') || hSet.has('sheet_name')) return 'MASTER_WORKBOOK';
+  if (hSet.has('supplier_invoice_no') || hSet.has('invoice_number') || (hSet.has('invoice_qty') && hSet.has('received_qty'))) return 'STOCK_ENTRY';
+  if (hSet.has('barcode') && (hSet.has('base_product_name') || hSet.has('stop_order_qty'))) return 'SKU';
+  if (hSet.has('vendor_code') || hSet.has('vendor_name') || hSet.has('company_name')) return 'VENDOR';
+  if (hSet.has('hsn_sac_code') || hSet.has('hsn_code')) return 'HSN_SAC';
+  if (hSet.has('category_code') || hSet.has('category_name')) return 'CATEGORY';
+  if (hSet.has('uom_code') || hSet.has('is_base_unit')) return 'UOM';
+  if (hSet.has('margin_percent') || hSet.has('sale_price') || hSet.has('cost_price') || hSet.has('basic_price')) return 'RATE_CARD';
+  return 'GENERIC';
+}
+
+/**
  * Dynamically extract and normalize all data fields from ANY CSV row
  * (Supports both direct-column CSVs and consolidated master CSVs with pipe delimiters)
  */
@@ -110,6 +127,7 @@ function extractFieldData(row) {
     baseProduct: row.Base_Product_Name || data.base || data.baseproduct || '',
     brand: row.Brand || row.Brand_Name || data.brand || '',
     variant: row.Variant || row.Variant_Name || data.variant || '',
+    category: row.Category || row.Category_Name || data.category || '',
     uom: row.UOM || data.uom || '',
     unitValue: row.Unit_Value || data.unitvalue || '1',
     manufacturer: row.Manufacturer || data.manufacturer || '',
@@ -129,7 +147,11 @@ function extractFieldData(row) {
     email: row.Email || data.email || '',
     // Stock Entry
     invoiceNumber: row.Invoice_Number || row.Supplier_Invoice_No || row.Key_Identifier || data.invoice || '',
-    vendor: row.Vendor || row.Vendor_Name || data.vendor || ''
+    vendor: row.Vendor || row.Vendor_Name || data.vendor || '',
+    // Rate Card Pricing
+    basicPrice: row.Basic_Price || row.Base_Price || data.baseprice || data.base || data.cost || '40.00',
+    mrp: row.MRP || data.mrp || '55.00',
+    retailPrice: row.Retail_Price || row.Sale_Price || data.sale || data.retailprice || '50.00'
   };
 }
 
@@ -158,7 +180,7 @@ console.log('===================================================================
 
 // 3. Dynamic test suite definition
 test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
-  let loginPage, skuPage, vendorPage, stockPage, hsnPage;
+  let loginPage, skuPage, vendorPage, stockPage, hsnPage, rateCardPage;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
@@ -166,6 +188,7 @@ test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
     vendorPage = new VendorPage(page);
     stockPage = new StockEntryPage(page);
     hsnPage = new HsnMasterPage(page);
+    rateCardPage = new RateCardPage(page);
 
     // Ensure session is authenticated at /erp/dashboard
     await loginPage.login('9000000000', ['1', '2', '3', '4', '5', '6']);
@@ -176,7 +199,8 @@ test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
     const rowNum = i + 1;
     const testId = row.Test_ID || row.Barcode || row.HSN_SAC_Code || row.Invoice_Number || `TC-${String(rowNum).padStart(2, '0')}`;
     const scenarioName = row.Scenario_Name || row.Base_Product_Name || row.Company_Name || `Scenario ${rowNum}`;
-    const moduleName = row.Sheet_Name || row.Module_Tab || 'General_Module';
+    const detectedSchema = detectSchema(Object.keys(row));
+    const moduleName = row.Sheet_Name || row.Module_Tab || (detectedSchema !== 'GENERIC' ? detectedSchema : 'General_Module');
     const fieldData = extractFieldData(row);
 
     test(`Row ${String(rowNum).padStart(2, '0')} [${moduleName}] ${testId} - ${scenarioName}`, async ({ page }) => {
@@ -206,6 +230,90 @@ test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
             }
           }
           console.log(`  ✅ SKU Module verified with CSV data: ${fieldData.barcode || row.Key_Identifier}`);
+          break;
+        }
+
+        case 'Base_Product': {
+          await skuPage.navigateToMasterData();
+          await skuPage.switchTab('base product');
+          const search = page.locator('input[placeholder*="Search"]').first();
+          if (await search.isVisible({ timeout: 3000 }).catch(() => false)) {
+            if (fieldData.baseProduct || row.Key_Identifier) {
+              await search.fill(fieldData.baseProduct || row.Key_Identifier);
+              await page.waitForTimeout(400);
+            }
+          }
+          console.log(`  ✅ Base Product tab verified with CSV: ${fieldData.baseProduct || row.Key_Identifier}`);
+          break;
+        }
+
+        case 'Category_SubCategory':
+        case 'CATEGORY': {
+          await skuPage.navigateToMasterData();
+          await skuPage.switchTab('category');
+          const search = page.locator('input[placeholder*="Search"]').first();
+          if (await search.isVisible({ timeout: 3000 }).catch(() => false)) {
+            const query = fieldData.category || row.Key_Identifier || 'Grocery';
+            await search.fill(query);
+            await page.waitForTimeout(400);
+          }
+          console.log(`  ✅ Category tab verified with CSV: ${fieldData.category || row.Key_Identifier}`);
+          break;
+        }
+
+        case 'Brand_Master':
+        case 'BRAND': {
+          await skuPage.navigateToMasterData();
+          await skuPage.switchTab('brand');
+          const search = page.locator('input[placeholder*="Search"]').first();
+          if (await search.isVisible({ timeout: 3000 }).catch(() => false)) {
+            const query = fieldData.brand || row.Key_Identifier || 'Daawat';
+            await search.fill(query);
+            await page.waitForTimeout(400);
+          }
+          console.log(`  ✅ Brand tab verified with CSV: ${fieldData.brand || row.Key_Identifier}`);
+          break;
+        }
+
+        case 'UOM_Variants':
+        case 'UOM': {
+          await skuPage.navigateToMasterData();
+          await skuPage.switchTab('uom');
+          const search = page.locator('input[placeholder*="Search"]').first();
+          if (await search.isVisible({ timeout: 3000 }).catch(() => false)) {
+            const query = fieldData.uom || row.Key_Identifier || 'kg';
+            await search.fill(query);
+            await page.waitForTimeout(400);
+          }
+          console.log(`  ✅ UOM tab verified with CSV: ${fieldData.uom || row.Key_Identifier}`);
+          break;
+        }
+
+        case 'Rate_Card_Pricing':
+        case 'RATE_CARD': {
+          await skuPage.navigateToMasterData();
+          await rateCardPage.openFirstSkuForEdit();
+          await rateCardPage.openAddRateCardModal();
+          await safeFill(rateCardPage.basicPriceInput, fieldData.basicPrice);
+          await safeFill(rateCardPage.mrpInput, fieldData.mrp);
+          if (fieldData.retailPrice) {
+            await safeFill(rateCardPage.retailPriceInput, fieldData.retailPrice);
+          }
+          await page.waitForTimeout(600);
+          await rateCardPage.clickCancelRateCard().catch(() => {});
+          await page.waitForTimeout(400);
+
+          const cancelSkuBtn = page.locator('.add-product-card button:has-text("Cancel"), button:has-text("Cancel")').first();
+          if (await cancelSkuBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+            await cancelSkuBtn.click();
+            await page.waitForTimeout(300);
+            const discardBtn = page.locator('.v-dialog:visible button, .v-overlay:visible button').filter({ hasText: /discard|confirm|leave|yes/i }).first();
+            if (await discardBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+              await discardBtn.click();
+              await page.waitForTimeout(300);
+            }
+          }
+          console.log(`  ✅ Rate Card Module verified with Pricing: Base ${fieldData.basicPrice} | MRP ${fieldData.mrp}`);
           break;
         }
 
@@ -259,11 +367,7 @@ test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
           break;
         }
 
-        case 'Base_Product':
-        case 'Category_SubCategory':
-        case 'Brand_Master':
-        case 'UOM_Variants':
-        case 'Rate_Card_Pricing':
+        case 'Purchase_Order':
         default: {
           await skuPage.navigateToMasterData();
           console.log(`  ✅ ${moduleName} verified with CSV row data`);

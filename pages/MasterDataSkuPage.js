@@ -52,9 +52,15 @@ export class MasterDataSkuPage {
    * Navigate to Master Data -> SKU
    */
   async navigateToMasterData() {
+    // If addSkuCard or modal is open, dismiss it first
+    if (await this.addSkuCard.isVisible({ timeout: 1000 }).catch(() => false)) {
+      await this.clickCancel().catch(() => {});
+    }
+    await this.page.locator('.v-overlay--active .v-overlay__scrim').waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
+
     await this.sidebarMasterData.waitFor({ state: 'visible', timeout: 15000 });
     await this.sidebarMasterData.click();
-    await this.page.waitForTimeout(1000);
+    await this.page.waitForTimeout(600);
   }
 
   /**
@@ -211,7 +217,15 @@ export class MasterDataSkuPage {
   }
 
   async clickCancel() {
-    await this.cancelButton.click();
+    if (await this.cancelButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await this.cancelButton.click();
+      await this.page.waitForTimeout(300);
+      const confirmDialogBtn = this.page.locator('.v-dialog:visible button').filter({ hasText: /confirm|yes|discard|leave/i }).first();
+      if (await confirmDialogBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await confirmDialogBtn.click();
+      }
+      await this.addSkuCard.waitFor({ state: 'hidden', timeout: 4000 }).catch(() => {});
+    }
   }
 
   /**

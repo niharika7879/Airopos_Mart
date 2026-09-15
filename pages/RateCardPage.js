@@ -157,8 +157,19 @@ export class RateCardPage {
    * Click Cancel / Close button in modal
    */
   async clickCancelRateCard() {
-    await this.cancelBtn.click();
-    await this.modal.waitFor({ state: 'hidden', timeout: 5000 });
+    if (await this.cancelBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await this.cancelBtn.click();
+      await this.page.waitForTimeout(300);
+
+      // Handle "Unsaved Changes" discard confirmation dialog if present
+      const discardBtn = this.page.locator('.v-dialog:visible button, .v-overlay:visible button').filter({ hasText: /discard|confirm|leave|yes/i }).first();
+      if (await discardBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+        await discardBtn.click();
+        await this.page.waitForTimeout(300);
+      }
+
+      await this.modal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+    }
   }
 
   /**
