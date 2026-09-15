@@ -13,7 +13,12 @@ let rawCsvPath = (process.env.CSV_FILE || process.env.METADATA_CSV_PATH || '').t
 rawCsvPath = rawCsvPath.replace(/^["']|["']$/g, '').trim();
 
 if (!rawCsvPath) {
-  rawCsvPath = path.resolve(__dirname, '../metadata/AIroPOS_Master_Sheets_1_to_9.csv');
+  console.error('\n❌ Error: No CSV file provided in terminal command!');
+  console.error('Please pass your CSV file dynamically when running:');
+  console.error('  Command Prompt : set "CSV_FILE=path/to/your_file.csv" && npx playwright test tests/dynamic-csv-runner.spec.js --project chromium --headed');
+  console.error('  PowerShell     : $env:CSV_FILE="path/to/your_file.csv"; npx playwright test tests/dynamic-csv-runner.spec.js --project chromium --headed');
+  console.error('  Universal CLI  : node dataimport.js --headed path/to/your_file.csv\n');
+  process.exit(1);
 }
 
 let resolvedCsvPath = path.isAbsolute(rawCsvPath) ? rawCsvPath : path.resolve(process.cwd(), rawCsvPath);
