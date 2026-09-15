@@ -9,8 +9,22 @@ const { StockEntryPage } = require('../pages/StockEntryPage.js');
 const { HsnMasterPage } = require('../pages/HsnMasterPage.js');
 
 // 1. Resolve CSV file dynamically from terminal environment variable
-const rawCsvPath = process.env.CSV_FILE || process.env.METADATA_CSV_PATH || path.resolve(__dirname, '../metadata/AIroPOS_Master_Sheets_1_to_9.csv');
-const resolvedCsvPath = path.isAbsolute(rawCsvPath) ? rawCsvPath : path.resolve(process.cwd(), rawCsvPath);
+let rawCsvPath = (process.env.CSV_FILE || process.env.METADATA_CSV_PATH || '').trim();
+rawCsvPath = rawCsvPath.replace(/^["']|["']$/g, '').trim();
+
+if (!rawCsvPath) {
+  rawCsvPath = path.resolve(__dirname, '../metadata/AIroPOS_Master_Sheets_1_to_9.csv');
+}
+
+let resolvedCsvPath = path.isAbsolute(rawCsvPath) ? rawCsvPath : path.resolve(process.cwd(), rawCsvPath);
+
+// Fallback search in metadata directory if relative path lookup fails
+if (!fs.existsSync(resolvedCsvPath)) {
+  const metaFallback = path.resolve(process.cwd(), 'metadata', path.basename(rawCsvPath));
+  if (fs.existsSync(metaFallback)) {
+    resolvedCsvPath = metaFallback;
+  }
+}
 
 if (!fs.existsSync(resolvedCsvPath)) {
   console.error(`\n❌ Error: Specified CSV file does not exist: ${resolvedCsvPath}\n`);
