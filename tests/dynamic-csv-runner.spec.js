@@ -10,6 +10,12 @@ const { HsnMasterPage } = require('../pages/HsnMasterPage.js');
 
 // 1. Resolve CSV file dynamically from terminal environment variable or CLI
 let rawCsvPath = (process.env.CSV_FILE || process.env.METADATA_CSV_PATH || '').trim();
+
+if (!rawCsvPath) {
+  const argCsv = process.argv.find(arg => arg.toLowerCase().endsWith('.csv') || arg.toLowerCase().endsWith('.csv"'));
+  if (argCsv) rawCsvPath = argCsv.trim();
+}
+
 rawCsvPath = rawCsvPath.replace(/^["']|["']$/g, '').trim();
 
 if (!rawCsvPath) {

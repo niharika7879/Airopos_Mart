@@ -9,6 +9,12 @@ import { defineConfig, devices } from '@playwright/test';
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+// Detect any .csv argument passed directly in terminal command
+const argCsv = process.argv.find(arg => arg.toLowerCase().endsWith('.csv') || arg.toLowerCase().endsWith('.csv"'));
+if (argCsv && !process.env.CSV_FILE) {
+  process.env.CSV_FILE = argCsv.replace(/^["']|["']$/g, '').trim();
+}
+
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
