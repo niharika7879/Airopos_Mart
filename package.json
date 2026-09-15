@@ -16,8 +16,8 @@
     "test:sku": "playwright test tests/masterdata/01-create-sku.spec.js --project=chromium --headed",
     "dataimport": "node dataimport.js",
     "dataimport:dry-run": "node dataimport.js --dry-run",
-    "test:csv": "playwright test tests/dynamic-csv-runner.spec.js --project=chromium --headed",
-    "test:csv:headless": "playwright test tests/dynamic-csv-runner.spec.js --project=chromium"
+    "test:csv": "node dataimport.js --headed",
+    "test:csv:headless": "node dataimport.js --e2e"
   },
   "keywords": [],
   "author": "",

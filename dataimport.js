@@ -265,7 +265,8 @@ async function run() {
   }
 
   const isDryRun = args.includes('--dry-run');
-  const isE2E = args.includes('--e2e') || args.includes('--ui');
+  const isHeaded = args.includes('--headed');
+  const isE2E = args.includes('--e2e') || args.includes('--ui') || isHeaded;
   const fileArgs = args.filter(a => !a.startsWith('--'));
   let targetFile = fileArgs[0];
 

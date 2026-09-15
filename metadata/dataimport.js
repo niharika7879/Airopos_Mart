@@ -265,7 +265,8 @@ async function run() {
   }
 
   const isDryRun = args.includes('--dry-run');
-  const isE2E = args.includes('--e2e') || args.includes('--ui');
+  const isHeaded = args.includes('--headed');
+  const isE2E = args.includes('--e2e') || args.includes('--ui') || isHeaded;
   const fileArgs = args.filter(a => !a.startsWith('--'));
   let targetFile = fileArgs[0];
 
@@ -331,8 +332,17 @@ async function run() {
 
   if (isE2E) {
     console.log(`🚀 Launching Playwright E2E UI runner driven by ${path.basename(targetFile)}...\n`);
-    const env = { ...process.env, METADATA_CSV_PATH: targetFile };
-    const pw = spawn('npx', ['playwright', 'test', '--reporter=list'], {
+    const env = { ...process.env, METADATA_CSV_PATH: targetFile, CSV_FILE: targetFile };
+    const isHeaded = args.includes('--headed');
+    const runnerArgs = [
+      'playwright',
+      'test',
+      'tests/dynamic-csv-runner.spec.js',
+      '--project=chromium',
+      ...(isHeaded ? ['--headed'] : []),
+      '--reporter=list'
+    ];
+    const pw = spawn('npx', runnerArgs, {
       stdio: 'inherit',
       shell: true,
       env
