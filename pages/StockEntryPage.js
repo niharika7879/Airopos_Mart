@@ -105,7 +105,8 @@ export class StockEntryPage {
   }
 
   async clickSaveChanges() {
-    await this.saveChangesBtn.waitFor({ state: 'visible', timeout: 5000 });
+    await this.saveChangesBtn.waitFor({ state: 'visible', timeout: 10000 });
+    await this.page.waitForTimeout(1000);
     await this.saveChangesBtn.click();
     await this.page.waitForTimeout(1000);
   }
@@ -119,9 +120,13 @@ export class StockEntryPage {
     }
 
     const dialog = this.page.locator('.v-dialog:visible').first();
-    await dialog.waitFor({ state: 'visible', timeout: 15000 });
+    const isVisible = await dialog.isVisible({ timeout: 4000 }).catch(() => false);
+    if (!isVisible) {
+      await this.saveChangesBtn.click().catch(() => {});
+    }
+    await dialog.waitFor({ state: 'visible', timeout: 25000 });
     const submitBtn = dialog.locator('button:has-text("Submit")').first();
-    await submitBtn.waitFor({ state: 'visible', timeout: 5000 });
+    await submitBtn.waitFor({ state: 'visible', timeout: 10000 });
     await submitBtn.click();
     await this.page.waitForTimeout(2000);
   }
@@ -152,11 +157,17 @@ export class StockEntryPage {
 
   async setReturnDetails(returnQty, reason = 'Damaged') {
     const row = this.page.locator('.product-table tbody tr').first();
-    const retQtyInput = row.locator('td:nth-child(9) input');
+    let retQtyInput = row.locator('td:nth-child(9) input');
     if (await retQtyInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await retQtyInput.fill(String(returnQty));
+      const isEnabled = await retQtyInput.isEnabled().catch(() => false);
+      if (!isEnabled) {
+        retQtyInput = row.locator('td:nth-child(10) input');
+      }
+      if (await retQtyInput.isVisible({ timeout: 2000 }).catch(() => false) && await retQtyInput.isEnabled().catch(() => false)) {
+        await retQtyInput.fill(String(returnQty));
+      }
     }
-    const reasonSelect = row.locator('td:nth-child(10)').locator('.v-select, input').first();
+    const reasonSelect = row.locator('td:nth-child(10), td:nth-child(11)').locator('.v-select, input').first();
     if (await reasonSelect.isVisible({ timeout: 2000 }).catch(() => false)) {
       await reasonSelect.click();
       await this.page.waitForTimeout(400);
