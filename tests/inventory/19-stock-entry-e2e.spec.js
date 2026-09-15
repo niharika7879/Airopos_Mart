@@ -106,4 +106,51 @@ test.describe('Inventory - Stock Entry E2E Workflow', () => {
 
     await stockEntryPage.verifyStockEntryInTable(uniqueInv);
   });
+
+  test('should create high-volume Stock Entry with maximum multiple product line-items (TC-SE-MAX)', async ({ page }) => {
+    test.setTimeout(180000); // 3 minutes timeout for 8 line items
+    await stockEntryPage.openStockEntryForm();
+
+    const uniqueInv = 'INV-MAX-' + Date.now().toString().slice(-6);
+
+    // 1. Select Vendor
+    await stockEntryPage.selectVendor('Balaji');
+
+    // 2. Fill Invoice Details
+    await stockEntryPage.fillInvoiceDetails({
+      invoiceNumber: uniqueInv,
+      eWayBill: '987654321098',
+      poNumber: 'PO-2026-MAX'
+    });
+
+    // 3. Define comprehensive product dataset spanning 10 distinct items
+    const productsToInward = [
+      { barcode: '890100000001', invoiceQty: '50',  receivedQty: '50',  freeQty: '0' },                            // Rice (1 Kg)
+      { barcode: '890100000004', invoiceQty: '30',  receivedQty: '30',  freeQty: '5' },                            // Sugar (1 Kg) - Bonus Free Items
+      { barcode: '890100000006', invoiceQty: '25',  receivedQty: '20',  returnQty: '5', returnReason: 'Damaged' }, // Wheat Flour (5 Kg) - Shortage / Damaged
+      { barcode: '890100000007', invoiceQty: '40',  receivedQty: '40',  freeQty: '0' },                            // Maida (1 Kg)
+      { barcode: '890100000008', invoiceQty: '20',  receivedQty: '18',  returnQty: '2', returnReason: 'Damaged' }, // Rava (1 Kg) - Shortage / Damaged
+      { barcode: '890100000009', invoiceQty: '35',  receivedQty: '35',  freeQty: '2' },                            // Besan (1 Kg) - Bonus Free Items
+      { barcode: '890100000010', invoiceQty: '60',  receivedQty: '60',  freeQty: '0' },                            // Toor Dal (1 Kg)
+      { barcode: '890100000011', invoiceQty: '15',  receivedQty: '15',  freeQty: '0' },                            // Moong Dal (1 Kg)
+      { barcode: '890100000012', invoiceQty: '45',  receivedQty: '40',  returnQty: '5', returnReason: 'Damaged' }, // Chana Dal (1 Kg) - Shortage
+      { barcode: '890100000002', invoiceQty: '100', receivedQty: '100', freeQty: '10' }                           // Premium Rice (1 Kg) - Bulk Inward
+    ];
+
+    // 4. Populate all 10 products dynamically into the invoice table
+    await stockEntryPage.addMultipleProducts(productsToInward);
+
+    // Verify all 10 product rows are rendered in the product table
+    const tableRows = page.locator('.product-table tbody tr');
+    await expect(tableRows).toHaveCount(productsToInward.length, { timeout: 10000 });
+
+    // 5. Save Changes
+    await stockEntryPage.clickSaveChanges();
+
+    // 6. Submit via Confirmation Modal
+    await stockEntryPage.confirmAndSubmit();
+
+    // 7. Verify entry in Stock Entry table with COMPLETED status
+    await stockEntryPage.verifyStockEntryInTable(uniqueInv);
+  });
 });

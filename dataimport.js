@@ -77,9 +77,9 @@ function parseCSV(content) {
 function detectSchema(headers) {
   const hSet = new Set(headers.map(h => h.toLowerCase()));
   if (hSet.has('sheet_no') || hSet.has('sheet_name')) return 'MASTER_WORKBOOK';
+  if (hSet.has('supplier_invoice_no') || hSet.has('invoice_number') || (hSet.has('invoice_qty') && hSet.has('received_qty'))) return 'STOCK_ENTRY';
   if (hSet.has('barcode') && (hSet.has('base_product_name') || hSet.has('stop_order_qty'))) return 'SKU';
   if (hSet.has('vendor_code') || hSet.has('vendor_name') || hSet.has('company_name')) return 'VENDOR';
-  if (hSet.has('invoice_number') || (hSet.has('invoice_qty') && hSet.has('received_qty'))) return 'STOCK_ENTRY';
   if (hSet.has('hsn_sac_code') || hSet.has('hsn_code')) return 'HSN_SAC';
   if (hSet.has('category_code') || hSet.has('category_name')) return 'CATEGORY';
   if (hSet.has('uom_code') || hSet.has('is_base_unit')) return 'UOM';
@@ -129,8 +129,8 @@ function extractFieldData(row) {
     displayName: row.Vendor_Name || row.Display_Name || data.vendor || '',
     phone: (row.Phone || row.Mobile || data.phone || data.mobile || '').replace(/\D/g, ''),
     email: row.Email || data.email || '',
-    invoiceNumber: row.Invoice_Number || row.Key_Identifier || data.invoice || '',
-    vendor: row.Vendor || data.vendor || ''
+    invoiceNumber: row.Invoice_Number || row.Supplier_Invoice_No || row.Key_Identifier || data.invoice || '',
+    vendor: row.Vendor || row.Vendor_Name || data.vendor || ''
   };
 }
 
@@ -184,7 +184,7 @@ function validateRow(row, schema) {
       break;
 
     case 'STOCK_ENTRY':
-      if (!row.Invoice_Number) errors.push('Missing Invoice_Number');
+      if (!row.Invoice_Number && !row.Supplier_Invoice_No) errors.push('Missing Invoice_Number');
       if (row.Invoice_Qty && isNaN(Number(row.Invoice_Qty))) errors.push('Invoice_Qty must be a valid number');
       break;
 
@@ -315,8 +315,8 @@ async function run() {
       process.exitCode = 1;
       return;
     }
-    const defaultMaster = path.resolve(process.cwd(), 'metadata', 'AIroPOS_Master_Sheets_1_to_9.csv');
-    const targetFile = fs.existsSync(defaultMaster) ? defaultMaster : path.resolve(process.cwd(), 'AIroPOS_Master_Sheets_1_to_9.csv');
+    const defaultMaster = path.resolve(process.cwd(), 'metadata', 'AIroPOS_Master_Sheets.csv');
+    const targetFile = fs.existsSync(defaultMaster) ? defaultMaster : path.resolve(process.cwd(), 'AIroPOS_Master_Sheets.csv');
     appendRowToCSV(targetFile, newValues);
     return;
   }

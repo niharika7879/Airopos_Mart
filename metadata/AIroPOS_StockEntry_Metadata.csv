@@ -6,3 +6,13 @@ TC-SE-04,Metro Cash and Carry Ltd,INV-2026-004,123456789015,890100000007,200,200
 TC-SE-05,[EMPTY],INV-2026-005,123456789016,890100000001,10,10,0,FAILED,Missing Vendor Selection,FAIL_VALIDATION (Vendor Name is required)
 TC-SE-06,Balaji Wholesale Traders Pvt Ltd,[EMPTY],123456789017,890100000001,10,10,0,FAILED,Missing Invoice Number,FAIL_VALIDATION (Invoice Number is required)
 TC-SE-07,Balaji Wholesale Traders Pvt Ltd,INV-2026-007,123456789018,890100000001,0,0,0,FAILED,Zero Quantity Inward,FAIL_VALIDATION (Quantity must be greater than 0)
+TC-SE-MAX-01,Balaji Wholesale Traders Pvt Ltd,INV-2026-MAX,987654321098,890100000001,50,50,0,SUCCESS,Rice (1 Kg) - Standard Inward Line Item,SUCCESS
+TC-SE-MAX-02,Balaji Wholesale Traders Pvt Ltd,INV-2026-MAX,987654321098,890100000004,30,30,5,SUCCESS,Sugar (1 Kg) - Bonus Free Scheme Items,SUCCESS
+TC-SE-MAX-03,Balaji Wholesale Traders Pvt Ltd,INV-2026-MAX,987654321098,890100000006,25,20,0,SUCCESS,Wheat Flour (5 Kg) - Shortage & 5 Damaged Return,SUCCESS
+TC-SE-MAX-04,Balaji Wholesale Traders Pvt Ltd,INV-2026-MAX,987654321098,890100000007,40,40,0,SUCCESS,Maida (1 Kg) - Standard Inward Line Item,SUCCESS
+TC-SE-MAX-05,Balaji Wholesale Traders Pvt Ltd,INV-2026-MAX,987654321098,890100000008,20,18,0,SUCCESS,Rava (1 Kg) - Shortage & 2 Damaged Return,SUCCESS
+TC-SE-MAX-06,Balaji Wholesale Traders Pvt Ltd,INV-2026-MAX,987654321098,890100000009,35,35,2,SUCCESS,Besan (1 Kg) - Bonus Free Scheme Items,SUCCESS
+TC-SE-MAX-07,Balaji Wholesale Traders Pvt Ltd,INV-2026-MAX,987654321098,890100000010,60,60,0,SUCCESS,Toor Dal (1 Kg) - Standard Inward Line Item,SUCCESS
+TC-SE-MAX-08,Balaji Wholesale Traders Pvt Ltd,INV-2026-MAX,987654321098,890100000011,15,15,0,SUCCESS,Moong Dal (1 Kg) - Standard Inward Line Item,SUCCESS
+TC-SE-MAX-09,Balaji Wholesale Traders Pvt Ltd,INV-2026-MAX,987654321098,890100000012,45,40,0,SUCCESS,Chana Dal (1 Kg) - Shortage & 5 Damaged Return,SUCCESS
+TC-SE-MAX-10,Balaji Wholesale Traders Pvt Ltd,INV-2026-MAX,987654321098,890100000002,100,100,10,SUCCESS,Premium Rice (1 Kg) - Bulk Inward & Free Scheme,SUCCESS

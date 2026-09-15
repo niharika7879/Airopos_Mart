@@ -128,8 +128,8 @@ function extractFieldData(row) {
     phone: (row.Phone || row.Mobile || data.phone || data.mobile || '').replace(/\D/g, ''),
     email: row.Email || data.email || '',
     // Stock Entry
-    invoiceNumber: row.Invoice_Number || row.Key_Identifier || data.invoice || '',
-    vendor: row.Vendor || data.vendor || ''
+    invoiceNumber: row.Invoice_Number || row.Supplier_Invoice_No || row.Key_Identifier || data.invoice || '',
+    vendor: row.Vendor || row.Vendor_Name || data.vendor || ''
   };
 }
 

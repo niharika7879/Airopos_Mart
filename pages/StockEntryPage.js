@@ -20,6 +20,7 @@ export class StockEntryPage {
 
     // Product row inputs
     this.productSkuInput = page.getByPlaceholder(/Scan or Enter Barcode\/SKU Code/i).first();
+    this.addProductBtn = page.locator('.add-product-btn, button:has-text("Add Product")').first();
     this.saveChangesBtn = page.locator('button:has-text("Save Changes")').first();
     this.saveDraftBtn = page.locator('button:has-text("Save Draft")').first();
     this.cancelBtn = page.locator('button:has-text("Cancel")').first();
@@ -68,13 +69,28 @@ export class StockEntryPage {
   }
 
   async addProductByBarcode(barcode, invoiceQty = '10', receivedQty = '10') {
-    await this.productSkuInput.waitFor({ state: 'visible', timeout: 15000 });
-    await this.productSkuInput.fill(barcode);
-    await this.productSkuInput.press('Enter');
+    return this.addProductItem({ barcode, invoiceQty, receivedQty }, 0);
+  }
 
-    // Wait for the product table row to load and display product name
-    const row = this.page.locator('.product-table tbody tr').first();
+  async addProductItem({ barcode, invoiceQty = '10', receivedQty = '10', freeQty = '0', returnQty = '', returnReason = '' }, rowIndex = 0) {
+    const tableRows = this.page.locator('.product-table tbody tr');
+    let rowCount = await tableRows.count();
+
+    // If targeting an index greater than current rows, click "Add Product" button to spawn row
+    while (rowCount <= rowIndex) {
+      await this.addProductBtn.waitFor({ state: 'visible', timeout: 5000 });
+      await this.addProductBtn.click();
+      await this.page.waitForTimeout(500);
+      rowCount = await tableRows.count();
+    }
+
+    const row = tableRows.nth(rowIndex);
     await row.waitFor({ state: 'visible', timeout: 10000 });
+
+    const skuInput = row.locator('td:nth-child(2) input').or(row.getByPlaceholder(/Scan or Enter Barcode/i)).first();
+    await skuInput.waitFor({ state: 'visible', timeout: 10000 });
+    await skuInput.fill(barcode);
+    await skuInput.press('Enter');
 
     // Wait until the product row td:nth-child(4) input (Product Name) is populated from backend
     const prodNameInput = row.locator('td:nth-child(4) input');
@@ -87,21 +103,75 @@ export class StockEntryPage {
       await this.page.waitForTimeout(500);
     }
 
+    // Set Invoice Quantity
     const invQtyInput = row.locator('td:nth-child(6) input');
     if (await invQtyInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await invQtyInput.fill(invoiceQty);
+      await invQtyInput.fill(String(invoiceQty));
       await invQtyInput.dispatchEvent('input');
       await invQtyInput.dispatchEvent('change');
     }
 
+    // Set Received Quantity
     const recQtyInput = row.locator('td:nth-child(7) input');
     if (await recQtyInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await recQtyInput.fill(receivedQty);
+      await recQtyInput.fill(String(receivedQty));
       await recQtyInput.dispatchEvent('input');
       await recQtyInput.dispatchEvent('change');
     }
 
-    await this.page.waitForTimeout(800);
+    // Set Free Quantity if provided
+    if (freeQty && freeQty !== '0') {
+      const freeQtyInput = row.locator('td:nth-child(8) input');
+      if (await freeQtyInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await freeQtyInput.fill(String(freeQty));
+        await freeQtyInput.dispatchEvent('input');
+        await freeQtyInput.dispatchEvent('change');
+      }
+    }
+
+    // Handle Return details if quantities differ or returnQty specified
+    const invN = parseFloat(String(invoiceQty)) || 0;
+    const recN = parseFloat(String(receivedQty)) || 0;
+    const diff = invN - recN;
+    const effectiveReturnQty = returnQty || (diff > 0 ? String(diff) : '');
+
+    if (effectiveReturnQty && effectiveReturnQty !== '0') {
+      let retQtyInput = row.locator('td:nth-child(9) input');
+      if (await retQtyInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+        const isEnabled = await retQtyInput.isEnabled().catch(() => false);
+        if (!isEnabled) {
+          retQtyInput = row.locator('td:nth-child(10) input');
+        }
+        if (await retQtyInput.isVisible({ timeout: 2000 }).catch(() => false) && await retQtyInput.isEnabled().catch(() => false)) {
+          await retQtyInput.fill(String(effectiveReturnQty));
+          await retQtyInput.dispatchEvent('input');
+          await retQtyInput.dispatchEvent('change');
+        }
+      }
+
+      const reasonSelect = row.locator('td:nth-child(10), td:nth-child(11)').locator('.v-select, input').first();
+      if (await reasonSelect.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await reasonSelect.click();
+        await this.page.waitForTimeout(400);
+        const option = this.page.locator('.v-overlay:visible .v-list-item').first();
+        if (await option.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await option.click();
+        }
+      }
+    }
+
+    await this.page.waitForTimeout(600);
+  }
+
+  async addMultipleProducts(productsList) {
+    for (let i = 0; i < productsList.length; i++) {
+      await this.addProductItem(productsList[i], i);
+    }
+  }
+
+  async verifySummaryTotalQuantity(expectedTotal) {
+    const totalInput = this.page.locator('.summary-footer .summary-input input, .summary-input input').first();
+    await expect(totalInput).toHaveValue(String(expectedTotal), { timeout: 10000 });
   }
 
   async clickSaveChanges() {
