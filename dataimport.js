@@ -88,6 +88,53 @@ function detectSchema(headers) {
 }
 
 /**
+ * Dynamically extract and normalize all data fields from ANY CSV row
+ */
+function extractFieldData(row) {
+  const data = { ...row };
+
+  function parseKV(text) {
+    if (!text || typeof text !== 'string') return;
+    const parts = text.split('|');
+    for (const part of parts) {
+      const idx = part.indexOf(':');
+      if (idx !== -1) {
+        const k = part.slice(0, idx).trim().toLowerCase().replace(/[\s_-]+/g, '');
+        const v = part.slice(idx + 1).trim();
+        data[k] = v;
+      }
+    }
+  }
+
+  parseKV(row.Input_Data_Details);
+  parseKV(row.Tax_or_Rate_Details);
+  parseKV(row.Quantity_or_Value);
+
+  return {
+    barcode: row.Barcode || row.Key_Identifier || data.barcode || '',
+    baseProduct: row.Base_Product_Name || data.base || data.baseproduct || '',
+    brand: row.Brand || row.Brand_Name || data.brand || '',
+    variant: row.Variant || row.Variant_Name || data.variant || '',
+    uom: row.UOM || data.uom || '',
+    unitValue: row.Unit_Value || data.unitvalue || '',
+    manufacturer: row.Manufacturer || data.manufacturer || '',
+    hsnCode: row.HSN_SAC_Code || row.HSN_Code || data.hsn || data.hsncode || '',
+    tax: (row.Total_GST_Rate || row.Tax_Percent || data.tax || data.gst || '').replace('%', '').trim(),
+    cess: (row.Cess_Rate || data.cess || '').replace('%', '').trim(),
+    description: row.Description || data.description || row.Scenario_Name || '',
+    stopOrderQty: row.Stop_Order_Qty || data.stoporder || '',
+    invoiceQty: row.Invoice_Qty || data.invoiceqty || '',
+    receivedQty: row.Received_Qty || data.receivedqty || '',
+    companyName: row.Company_Name || row.Vendor_Name || row.Key_Identifier || data.companyname || '',
+    displayName: row.Vendor_Name || row.Display_Name || data.vendor || '',
+    phone: (row.Phone || row.Mobile || data.phone || data.mobile || '').replace(/\D/g, ''),
+    email: row.Email || data.email || '',
+    invoiceNumber: row.Invoice_Number || row.Key_Identifier || data.invoice || '',
+    vendor: row.Vendor || data.vendor || ''
+  };
+}
+
+/**
  * Authenticate with AIroPOS Gateway
  */
 async function authenticate() {
@@ -164,14 +211,19 @@ async function executeModuleRow(row, schema, token, isDryRun) {
   }
 
   const moduleType = row.Sheet_Name || schema;
+  const fieldData = extractFieldData(row);
 
   try {
     switch (moduleType) {
       case 'SKU_Master':
       case 'SKU': {
         const payload = {
-          barCode: row.Key_Identifier || row.Barcode,
-          productName: row.Scenario_Name || row.Base_Product_Name,
+          barCode: fieldData.barcode || row.Key_Identifier,
+          productName: fieldData.baseProduct || fieldData.description || row.Scenario_Name,
+          brand: fieldData.brand,
+          uom: fieldData.uom,
+          hsn: fieldData.hsnCode,
+          tax: fieldData.tax,
           status: row.Status || 'ACTIVE'
         };
         return { status: 'SUCCESS', message: `SKU ${payload.barCode} executed on SKU Module` };
@@ -180,7 +232,9 @@ async function executeModuleRow(row, schema, token, isDryRun) {
       case 'Vendor_Management':
       case 'VENDOR': {
         const payload = {
-          vendorName: row.Key_Identifier || row.Vendor_Name || row.Company_Name,
+          vendorName: fieldData.companyName || fieldData.displayName || row.Key_Identifier,
+          phone: fieldData.phone,
+          email: fieldData.email,
           status: row.Status || 'ACTIVE'
         };
         return { status: 'SUCCESS', message: `Vendor ${payload.vendorName} executed on Vendor Module` };
@@ -189,7 +243,9 @@ async function executeModuleRow(row, schema, token, isDryRun) {
       case 'Stock_Entry_Inward':
       case 'STOCK_ENTRY': {
         const payload = {
-          invoiceNumber: row.Key_Identifier || row.Invoice_Number,
+          invoiceNumber: fieldData.invoiceNumber || row.Key_Identifier,
+          vendor: fieldData.vendor,
+          qty: fieldData.invoiceQty,
           status: 'COMPLETED'
         };
         return { status: 'SUCCESS', message: `Stock Entry ${payload.invoiceNumber} executed on Inward Module` };
@@ -198,8 +254,9 @@ async function executeModuleRow(row, schema, token, isDryRun) {
       case 'HSN_SAC_Tax_Slabs':
       case 'HSN_SAC': {
         const payload = {
-          hsnCode: row.Key_Identifier || row.HSN_SAC_Code || row.HSN_Code,
-          taxRate: row.Tax_or_Rate_Details || row.Total_GST_Rate
+          hsnCode: fieldData.hsnCode || row.Key_Identifier,
+          taxRate: fieldData.tax,
+          description: fieldData.description
         };
         return { status: 'SUCCESS', message: `HSN ${payload.hsnCode} executed on Tax Master` };
       }
@@ -268,43 +325,29 @@ async function run() {
   const isHeaded = args.includes('--headed');
   const isE2E = args.includes('--e2e') || args.includes('--ui') || isHeaded;
   const fileArgs = args.filter(a => !a.startsWith('--'));
-  let targetFile = fileArgs[0];
+  const rawFile = fileArgs[0];
 
-  // Dynamic fallback across multiple search directories
-  if (!targetFile) {
-    const candidateNames = [
-      'AIroPOS_Master_Sheets_1_to_9.csv',
-      'AIroPOS_MasterData_SKUs.csv',
-      'AIroPOS_Vendor_Metadata.csv',
-      'AIroPOS_StockEntry_Metadata.csv',
-      'AIroPOS_HSN_SAC_Metadata.csv'
-    ];
+  if (!rawFile) {
+    console.error('\n❌ Error: No CSV file specified in terminal command!');
+    console.log('Usage: node dataimport.js [options] <path-to-csv-file>');
+    console.log('Examples:');
+    console.log('  node dataimport.js metadata/my_file.csv');
+    console.log('  node dataimport.js --headed metadata/my_file.csv');
+    console.log('  node dataimport.js --dry-run metadata/my_file.csv\n');
+    process.exitCode = 1;
+    return;
+  }
 
-    const searchDirs = [
-      process.cwd(),
-      path.resolve(process.cwd(), 'metadata'),
-      path.resolve(process.cwd(), '..', 'metadata')
-    ];
-
-    for (const dir of searchDirs) {
-      for (const name of candidateNames) {
-        const fullPath = path.resolve(dir, name);
-        if (fs.existsSync(fullPath)) {
-          targetFile = fullPath;
-          break;
-        }
-      }
-      if (targetFile) break;
+  let targetFile = path.isAbsolute(rawFile) ? rawFile : path.resolve(process.cwd(), rawFile);
+  if (!fs.existsSync(targetFile)) {
+    const metaFallback = path.resolve(process.cwd(), 'metadata', path.basename(rawFile));
+    if (fs.existsSync(metaFallback)) {
+      targetFile = metaFallback;
     }
   }
 
-  if (!targetFile || !fs.existsSync(targetFile)) {
-    console.error('\n❌ Error: No CSV file specified or found.');
-    console.log('Usage: node dataimport.js [options] <path-to-csv-file>');
-    console.log('Options:');
-    console.log('  --dry-run                 Validate without executing');
-    console.log('  --e2e                     Run Playwright browser UI tests');
-    console.log('  --append <values...>      Append new row to Master CSV\n');
+  if (!fs.existsSync(targetFile)) {
+    console.error(`\n❌ Error: Specified CSV file does not exist: ${targetFile}\n`);
     process.exitCode = 1;
     return;
   }
