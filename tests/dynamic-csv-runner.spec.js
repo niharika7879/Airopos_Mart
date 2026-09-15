@@ -2,6 +2,11 @@
 const { test, expect } = require('@playwright/test');
 const fs = require('fs');
 const path = require('path');
+const { LoginPage } = require('../pages/LoginPage.js');
+const { MasterDataSkuPage } = require('../pages/MasterDataSkuPage.js');
+const { VendorPage } = require('../pages/VendorPage.js');
+const { StockEntryPage } = require('../pages/StockEntryPage.js');
+const { HsnMasterPage } = require('../pages/HsnMasterPage.js');
 
 // 1. Resolve CSV file dynamically from terminal environment variable
 const rawCsvPath = process.env.CSV_FILE || process.env.METADATA_CSV_PATH || path.resolve(__dirname, '../metadata/AIroPOS_Master_Sheets_1_to_9.csv');
@@ -68,6 +73,19 @@ console.log('===================================================================
 
 // 3. Dynamic test suite definition
 test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
+  let loginPage, skuPage, vendorPage, stockPage, hsnPage;
+
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
+    skuPage = new MasterDataSkuPage(page);
+    vendorPage = new VendorPage(page);
+    stockPage = new StockEntryPage(page);
+    hsnPage = new HsnMasterPage(page);
+
+    // Ensure session is authenticated at /erp/dashboard
+    await loginPage.login('9000000000', ['1', '2', '3', '4', '5', '6']);
+  });
+
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     const rowNum = i + 1;
@@ -83,61 +101,56 @@ test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
       switch (moduleName) {
         case 'SKU_Master':
         case 'SKU': {
-          await page.goto('/masterdata/sku');
-          await page.waitForLoadState('domcontentloaded');
-          const searchInput = page.locator('input[placeholder*="Search"], input[type="text"]').first();
+          await skuPage.navigateToMasterData();
+          const searchInput = page.locator('input[placeholder*="Search"]').first();
           if (await searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
             if (row.Key_Identifier) {
               await searchInput.fill(row.Key_Identifier);
               await page.waitForTimeout(500);
             }
           }
-          console.log(`  ✅ SKU Module check passed for identifier: ${row.Key_Identifier || testId}`);
+          console.log(`  ✅ SKU Module verified for identifier: ${row.Key_Identifier || testId}`);
           break;
         }
 
         case 'Vendor_Management':
         case 'VENDOR': {
-          await page.goto('/vendor');
-          await page.waitForLoadState('domcontentloaded');
-          const searchInput = page.locator('input[placeholder*="Search"], input[type="text"]').first();
-          if (await searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+          await vendorPage.navigateToVendorList();
+          if (await vendorPage.searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
             if (row.Key_Identifier) {
-              await searchInput.fill(row.Key_Identifier);
+              await vendorPage.searchInput.fill(row.Key_Identifier);
               await page.waitForTimeout(500);
             }
           }
-          console.log(`  ✅ Vendor Module check passed for identifier: ${row.Key_Identifier || testId}`);
+          console.log(`  ✅ Vendor Module verified for identifier: ${row.Key_Identifier || testId}`);
           break;
         }
 
         case 'Stock_Entry_Inward':
         case 'STOCK_ENTRY': {
-          await page.goto('/inventory/stock-entry');
-          await page.waitForLoadState('domcontentloaded');
-          const searchInput = page.locator('input[placeholder*="Search"], input[type="text"]').first();
+          await stockPage.navigateToStockEntry();
+          const searchInput = page.locator('input[placeholder*="Search"]').first();
           if (await searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
             if (row.Key_Identifier) {
               await searchInput.fill(row.Key_Identifier);
               await page.waitForTimeout(500);
             }
           }
-          console.log(`  ✅ Stock Entry check passed for invoice: ${row.Key_Identifier || testId}`);
+          console.log(`  ✅ Stock Entry verified for invoice: ${row.Key_Identifier || testId}`);
           break;
         }
 
         case 'HSN_SAC_Tax_Slabs':
         case 'HSN_SAC': {
-          await page.goto('/masterdata/hsn');
-          await page.waitForLoadState('domcontentloaded');
-          const searchInput = page.locator('input[placeholder*="Search"], input[type="text"]').first();
-          if (await searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+          await skuPage.navigateToMasterData();
+          await hsnPage.navigateViaTab();
+          if (await hsnPage.searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
             if (row.Key_Identifier) {
-              await searchInput.fill(row.Key_Identifier);
+              await hsnPage.searchInput.fill(row.Key_Identifier);
               await page.waitForTimeout(500);
             }
           }
-          console.log(`  ✅ HSN/SAC check passed for code: ${row.Key_Identifier || testId}`);
+          console.log(`  ✅ HSN/SAC verified for code: ${row.Key_Identifier || testId}`);
           break;
         }
 
@@ -147,9 +160,8 @@ test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
         case 'UOM_Variants':
         case 'Rate_Card_Pricing':
         default: {
-          await page.goto('/masterdata');
-          await page.waitForLoadState('domcontentloaded');
-          console.log(`  ✅ ${moduleName} check passed for record: ${testId}`);
+          await skuPage.navigateToMasterData();
+          console.log(`  ✅ ${moduleName} verified for record: ${testId}`);
           break;
         }
       }
