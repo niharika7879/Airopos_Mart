@@ -18,9 +18,11 @@ jobs:
     - name: Install Playwright Chromium Browser
       run: npx playwright install chromium --with-deps
     - name: Validate Master Metadata Import Engine
-      run: npm run dataimport
+      run: node dataimport.js metadata/AIroPOS_Master_Sheets_1_to_9.csv
     - name: Run Playwright tests
       run: npx playwright test --project=chromium
+      env:
+        CSV_FILE: metadata/AIroPOS_Master_Sheets_1_to_9.csv
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:

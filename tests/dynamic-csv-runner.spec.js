@@ -17,29 +17,24 @@ if (!rawCsvPath) {
 
 rawCsvPath = rawCsvPath.replace(/^["']|["']$/g, '').trim();
 
-if (!rawCsvPath) {
-  console.error('\n❌ Error: No CSV file provided in terminal command!');
-  console.error('Please pass your CSV file dynamically when running:');
-  console.error('  Command Prompt : set "CSV_FILE=path/to/your_file.csv" && npx playwright test tests/dynamic-csv-runner.spec.js --project chromium --headed');
-  console.error('  PowerShell     : $env:CSV_FILE="path/to/your_file.csv"; npx playwright test tests/dynamic-csv-runner.spec.js --project chromium --headed');
-  console.error('  Universal CLI  : node dataimport.js --headed path/to/your_file.csv\n');
-  process.exit(1);
-}
-
-let resolvedCsvPath = path.isAbsolute(rawCsvPath) ? rawCsvPath : path.resolve(process.cwd(), rawCsvPath);
-
-// Fallback search in metadata directory if relative path lookup fails
-if (!fs.existsSync(resolvedCsvPath)) {
-  const metaFallback = path.resolve(process.cwd(), 'metadata', path.basename(rawCsvPath));
-  if (fs.existsSync(metaFallback)) {
-    resolvedCsvPath = metaFallback;
+let resolvedCsvPath = null;
+if (rawCsvPath) {
+  resolvedCsvPath = path.isAbsolute(rawCsvPath) ? rawCsvPath : path.resolve(process.cwd(), rawCsvPath);
+  if (!fs.existsSync(resolvedCsvPath)) {
+    const metaFallback = path.resolve(process.cwd(), 'metadata', path.basename(rawCsvPath));
+    if (fs.existsSync(metaFallback)) {
+      resolvedCsvPath = metaFallback;
+    }
   }
 }
 
-if (!fs.existsSync(resolvedCsvPath)) {
-  console.error(`\n❌ Error: Specified CSV file does not exist: ${resolvedCsvPath}\n`);
-  process.exit(1);
-}
+if (!resolvedCsvPath || !fs.existsSync(resolvedCsvPath)) {
+  test.describe('Dynamic CSV Runner', () => {
+    test('Dynamic CSV Suite (No CSV Provided)', () => {
+      test.skip(true, 'No CSV file provided in terminal command. Run with: npx playwright test tests/dynamic-csv-runner.spec.js <path-to-csv>');
+    });
+  });
+} else {
 
 /**
  * Standard CSV Parser supporting quotes, commas, and multiline values
@@ -280,3 +275,5 @@ test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
     });
   }
 });
+}
+
