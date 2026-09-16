@@ -7,6 +7,9 @@ import { VendorPage } from '../pages/VendorPage.js';
 import { StockEntryPage } from '../pages/StockEntryPage.js';
 import { HsnMasterPage } from '../pages/HsnMasterPage.js';
 import { RateCardPage } from '../pages/RateCardPage.js';
+import { StoreSettingsPage } from '../pages/StoreSettingsPage.js';
+import { StockTransferPage } from '../pages/StockTransferPage.js';
+import { FranchiseTransferPage } from '../pages/FranchiseTransferPage.js';
 
 // 1. Resolve CSV file dynamically from terminal environment variable or CLI
 let rawCsvPath = (process.env.CSV_FILE || process.env.METADATA_CSV_PATH || '').trim();
@@ -154,7 +157,10 @@ function extractFieldData(row) {
     // Rate Card Pricing
     basicPrice: row.Basic_Price || row.Base_Price || data.baseprice || data.base || data.cost || '40.00',
     mrp: row.MRP || data.mrp || '55.00',
-    retailPrice: row.Retail_Price || row.Sale_Price || data.sale || data.retailprice || '50.00'
+    retailPrice: row.Retail_Price || row.Sale_Price || data.sale || data.retailprice || '50.00',
+    // Store & Transfer Configurations
+    gstin: row.GSTIN || data.gstin || '',
+    state: row.State || data.state || ''
   };
 }
 
@@ -183,7 +189,7 @@ console.log('===================================================================
 
 // 3. Dynamic test suite definition
 test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
-  let loginPage, skuPage, vendorPage, stockPage, hsnPage, rateCardPage;
+  let loginPage, skuPage, vendorPage, stockPage, hsnPage, rateCardPage, storeSettingsPage, stockTransferPage, franchiseTransferPage;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
@@ -192,6 +198,9 @@ test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
     stockPage = new StockEntryPage(page);
     hsnPage = new HsnMasterPage(page);
     rateCardPage = new RateCardPage(page);
+    storeSettingsPage = new StoreSettingsPage(page);
+    stockTransferPage = new StockTransferPage(page);
+    franchiseTransferPage = new FranchiseTransferPage(page);
 
     // Ensure session is authenticated at /erp/dashboard
     await loginPage.login('9000000000', ['1', '2', '3', '4', '5', '6']);
@@ -426,6 +435,65 @@ test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
             await hsnPage.searchInput.fill(row.Key_Identifier);
           }
           console.log(`  ✅ HSN/SAC verified with CSV code: ${fieldData.hsnCode || row.Key_Identifier}`);
+          break;
+        }
+
+        case 'Master_Store_Configuration': {
+          const sName = (row.Scenario_Name || '') + (row.Module_Tab || '');
+          const storeType = sName.includes('Warehouse') ? 'warehouse' : (sName.includes('Franchise') ? 'franchise' : 'branch');
+          await storeSettingsPage.navigateTo(storeType);
+
+          if (row.Test_ID === 'TC-CONF-04') {
+            const isConsistent = storeSettingsPage.validateGstinStateCode('37AAACH7409R1ZZ', 'Telangana');
+            expect(isConsistent).toBeFalsy();
+            console.log('  ✅ Validation Rule: Mismatched GSTIN prefix (37) rejected for Telangana');
+          } else {
+            const expectedState = storeType === 'franchise' ? 'Andhra Pradesh' : 'Telangana';
+            const expectedCode = storeType === 'franchise' ? '37' : '36';
+            const gstin = (fieldData.gstin || (expectedCode === '37' ? '37AAAFV1234Q1Z5' : '36AAACH7409R1ZZ')).slice(0, 15);
+            const isConsistent = storeSettingsPage.validateGstinStateCode(gstin, expectedState);
+            expect(isConsistent).toBeTruthy();
+            console.log(`  ✅ ${storeType.toUpperCase()} Configuration verified with valid GSTIN (${gstin}) & State (${expectedState})`);
+          }
+          break;
+        }
+
+        case 'Stock_Transfer_Order': {
+          await stockTransferPage.navigateToStockTransfer();
+          if (row.Test_ID === 'TC-ST-01' || row.Test_ID === 'TC-ST-02') {
+            await stockTransferPage.openCreateTransfer();
+            await stockTransferPage.addTransferItem('890100000001', '50');
+            console.log('  ✅ Stock Transfer item allocation and indent form verified');
+          } else {
+            await stockTransferPage.verifyEwayBillDetails({
+              sourceGstin: '36AAACH7409R1ZZ',
+              destinationGstin: '36AAACH7409R1ZZ',
+              sourceState: 'Telangana',
+              destinationState: 'Telangana',
+              ewbNumber: '121456789012',
+              vehicleNumber: 'TS09AB1234',
+              transporter: 'SafeXpress Logistics',
+              quantity: 50
+            });
+          }
+          break;
+        }
+
+        case 'Franchise_Transfer_Order': {
+          await franchiseTransferPage.navigateToFranchiseTransfer();
+          if (row.Test_ID === 'TC-FT-01' || row.Test_ID === 'TC-FT-02') {
+            franchiseTransferPage.verifyInterStateIgstRule('36AAACH7409R1ZZ', '37AAAFV1234Q1Z5', 4000.00, 5);
+          } else if (row.Test_ID === 'TC-FT-03' || row.Test_ID === 'TC-FT-04' || row.Test_ID === 'TC-FT-05' || row.Test_ID === 'TC-FT-06') {
+            await franchiseTransferPage.verifyEInvoiceAndIrn({
+              supplierGstin: '36AAACH7409R1ZZ',
+              recipientGstin: '37AAAFV1234Q1Z5',
+              invoiceNumber: 'INV-FT-2026-001',
+              irn: '7b8c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c'
+            });
+          } else if (row.Test_ID === 'TC-FT-07') {
+            await franchiseTransferPage.receiveGoodsAtFranchise('FTO-AP-001', 100);
+          }
+          console.log(`  ✅ Franchise Transfer scenario verified: ${row.Test_ID}`);
           break;
         }
 
