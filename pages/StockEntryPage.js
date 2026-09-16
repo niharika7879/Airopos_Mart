@@ -76,8 +76,11 @@ export class StockEntryPage {
     const tableRows = this.page.locator('.product-table tbody tr');
     let rowCount = await tableRows.count();
 
-    // If targeting an index greater than current rows, click "Add Product" button to spawn row
-    while (rowCount <= rowIndex) {
+    // If targeting an index greater than current rows, click "Add Product" button to spawn row (safety bounded to max 10 attempts)
+    let addAttempts = 0;
+    while (rowCount <= rowIndex && addAttempts < 10) {
+      addAttempts++;
+      await this.addProductBtn.scrollIntoViewIfNeeded().catch(() => {});
       await this.addProductBtn.waitFor({ state: 'visible', timeout: 5000 });
       await this.addProductBtn.click();
       await this.page.waitForTimeout(500);
@@ -85,15 +88,42 @@ export class StockEntryPage {
     }
 
     const row = tableRows.nth(rowIndex);
+    await row.scrollIntoViewIfNeeded().catch(() => {});
     await row.waitFor({ state: 'visible', timeout: 10000 });
 
     const skuInput = row.locator('td:nth-child(2) input').or(row.getByPlaceholder(/Scan or Enter Barcode/i)).first();
     await skuInput.waitFor({ state: 'visible', timeout: 10000 });
-    await skuInput.fill(barcode);
-    await skuInput.press('Enter');
 
-    // Wait until the product row td:nth-child(4) input (Product Name) is populated from backend
+    // In Vuetify 3, lookup only triggers on @keyup.enter when model is populated.
+    // Ensure value is filled and Vue's reactive model is synchronized before pressing Enter.
     const prodNameInput = row.locator('td:nth-child(4) input');
+    let productLoaded = false;
+    for (let attempt = 0; attempt < 4; attempt++) {
+      await skuInput.click();
+      await skuInput.fill(barcode);
+      await this.page.waitForTimeout(300);
+      await skuInput.press('Enter');
+
+      // Dismiss Rate Card dialog if it popped up
+      const skipBtn = this.page.locator('button:has-text("Skip for Now")');
+      if (await skipBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+        await skipBtn.click();
+        await this.page.waitForTimeout(400);
+      }
+
+      // Poll inputValue without calling expect to avoid Playwright test step failure
+      for (let w = 0; w < 20; w++) {
+        const val = await prodNameInput.inputValue().catch(() => '');
+        if (val && val.trim().length > 0) {
+          productLoaded = true;
+          break;
+        }
+        await this.page.waitForTimeout(200);
+      }
+      if (productLoaded) break;
+    }
+
+    // Final assertion that Product Name is populated
     await expect(prodNameInput).not.toHaveValue('', { timeout: 15000 });
 
     // If Rate card dialog appears asking to create rate card, click Skip
@@ -106,26 +136,34 @@ export class StockEntryPage {
     // Set Invoice Quantity
     const invQtyInput = row.locator('td:nth-child(6) input');
     if (await invQtyInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await invQtyInput.click();
       await invQtyInput.fill(String(invoiceQty));
       await invQtyInput.dispatchEvent('input');
       await invQtyInput.dispatchEvent('change');
+      await invQtyInput.dispatchEvent('blur');
+      await this.page.waitForTimeout(100);
     }
 
     // Set Received Quantity
     const recQtyInput = row.locator('td:nth-child(7) input');
     if (await recQtyInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await recQtyInput.click();
       await recQtyInput.fill(String(receivedQty));
       await recQtyInput.dispatchEvent('input');
       await recQtyInput.dispatchEvent('change');
+      await recQtyInput.dispatchEvent('blur');
+      await this.page.waitForTimeout(100);
     }
 
     // Set Free Quantity if provided
     if (freeQty && freeQty !== '0') {
       const freeQtyInput = row.locator('td:nth-child(8) input');
       if (await freeQtyInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await freeQtyInput.click();
         await freeQtyInput.fill(String(freeQty));
         await freeQtyInput.dispatchEvent('input');
         await freeQtyInput.dispatchEvent('change');
+        await freeQtyInput.dispatchEvent('blur');
       }
     }
 
@@ -143,9 +181,11 @@ export class StockEntryPage {
           retQtyInput = row.locator('td:nth-child(10) input');
         }
         if (await retQtyInput.isVisible({ timeout: 2000 }).catch(() => false) && await retQtyInput.isEnabled().catch(() => false)) {
+          await retQtyInput.click();
           await retQtyInput.fill(String(effectiveReturnQty));
           await retQtyInput.dispatchEvent('input');
           await retQtyInput.dispatchEvent('change');
+          await retQtyInput.dispatchEvent('blur');
         }
       }
 
@@ -162,7 +202,7 @@ export class StockEntryPage {
       }
     }
 
-    await this.page.waitForTimeout(600);
+    await this.page.waitForTimeout(500);
   }
 
   async addMultipleProducts(productsList) {
@@ -177,8 +217,16 @@ export class StockEntryPage {
   }
 
   async clickSaveChanges() {
+    // Blur any active inputs to ensure Vue models are synchronized and validation rules pass
+    await this.page.evaluate(() => {
+      if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+      }
+    });
+    await this.page.waitForTimeout(500);
+    await this.saveChangesBtn.scrollIntoViewIfNeeded().catch(() => {});
     await this.saveChangesBtn.waitFor({ state: 'visible', timeout: 10000 });
-    await this.page.waitForTimeout(1000);
+    await this.page.waitForTimeout(500);
     await this.saveChangesBtn.click();
     await this.page.waitForTimeout(1000);
   }
@@ -194,8 +242,12 @@ export class StockEntryPage {
     const dialog = this.page.locator('.v-dialog:visible').first();
     const isVisible = await dialog.isVisible({ timeout: 4000 }).catch(() => false);
     if (!isVisible) {
-      await this.saveChangesBtn.click().catch(() => {});
+      const saveBtnVisible = await this.saveChangesBtn.isVisible().catch(() => false);
+      if (saveBtnVisible) {
+        await this.saveChangesBtn.click().catch(() => {});
+      }
     }
+
     await dialog.waitFor({ state: 'visible', timeout: 25000 });
     const submitBtn = dialog.locator('button:has-text("Submit")').first();
     await submitBtn.waitFor({ state: 'visible', timeout: 10000 });
