@@ -33,13 +33,27 @@ export class StockTransferPage {
   }
 
   /**
-   * Navigate to Stock Transfer list
+   * Navigate to Stock Transfer list via UI tabs
    */
   async navigateToStockTransfer() {
-    const targetUrl = '/erp/inventory/stock-transfer';
-    if (!this.page.url().includes(targetUrl)) {
-      await this.page.goto(targetUrl);
+    if (!this.page.url().includes('dashboard') && !this.page.url().includes('stock-transfer')) {
+      await this.page.goto('/erp/dashboard');
       await this.page.waitForLoadState('domcontentloaded');
+    }
+
+    // 1. Click 'Inventory' in top navbar
+    const invNav = this.page.getByText('Inventory', { exact: true }).first();
+    if (await invNav.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await invNav.click();
+      await this.page.waitForTimeout(600);
+    }
+
+    // 2. Click 'Stock Transfer' in submenu tabs
+    const stockTransferTab = this.page.locator('.categories-bar-content, .submenu-tabs, div, button')
+      .filter({ hasText: /^Stock Transfer$/i }).first();
+    if (await stockTransferTab.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await stockTransferTab.click();
+      await this.page.waitForTimeout(800);
     }
   }
 
@@ -47,10 +61,12 @@ export class StockTransferPage {
    * Open Manual Transfer Form (Indent Fulfillment)
    */
   async openCreateTransfer() {
-    const manualUrl = '/erp/inventory/indent-fulfillment';
-    await this.page.goto(manualUrl);
-    await this.page.waitForLoadState('domcontentloaded');
-    await this.page.waitForTimeout(600);
+    await this.navigateToStockTransfer();
+    const createBtn = this.page.locator('button:has-text("Create Stock Transfer"), button:has-text("Create Transfer"), button:has-text("Add New")').first();
+    if (await createBtn.isVisible({ timeout: 4000 }).catch(() => false)) {
+      await createBtn.click();
+      await this.page.waitForTimeout(800);
+    }
   }
 
   /**

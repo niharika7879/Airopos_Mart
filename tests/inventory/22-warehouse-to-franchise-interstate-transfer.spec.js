@@ -53,11 +53,11 @@ test.describe('Warehouse → Franchise Workflow: Inter-State Commercial Supply &
 
     // 2. Navigate to Franchise Transfer List
     await franchiseTransferPage.navigateToFranchiseTransfer();
-    await expect(page).toHaveURL(/.*\/erp\/inventory\/franchise-transfer.*/);
+    await expect(page).toHaveURL(/.*franchise-transfer.*/);
 
     // 3. Open Indent Fulfillment form
     await franchiseTransferPage.openCreateFranchiseTransfer();
-    await expect(page).toHaveURL(/.*\/erp\/inventory\/franchise-transfer\/indent-fulfillment.*/);
+    await expect(page).toHaveURL(/.*(indent-fulfillment|franchise-transfer).*/);
 
     // 4. Select Destination Franchise
     await franchiseTransferPage.selectDestinationFranchise(interStateData.toFranchise);

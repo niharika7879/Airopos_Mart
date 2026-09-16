@@ -41,13 +41,27 @@ export class FranchiseTransferPage {
   }
 
   /**
-   * Navigate to Franchise Transfer list
+   * Navigate to Franchise Transfer list via UI tabs
    */
   async navigateToFranchiseTransfer() {
-    const targetUrl = '/erp/inventory/franchise-transfer';
-    if (!this.page.url().includes(targetUrl)) {
-      await this.page.goto(targetUrl);
+    if (!this.page.url().includes('dashboard') && !this.page.url().includes('franchise-transfer')) {
+      await this.page.goto('/erp/dashboard');
       await this.page.waitForLoadState('domcontentloaded');
+    }
+
+    // 1. Click 'Inventory' in top navbar
+    const invNav = this.page.getByText('Inventory', { exact: true }).first();
+    if (await invNav.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await invNav.click();
+      await this.page.waitForTimeout(600);
+    }
+
+    // 2. Click 'Franchise Transfer' in submenu tabs
+    const franchiseTransferTab = this.page.locator('.categories-bar-content, .submenu-tabs, div, button')
+      .filter({ hasText: /^Franchise Transfer$/i }).first();
+    if (await franchiseTransferTab.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await franchiseTransferTab.click();
+      await this.page.waitForTimeout(800);
     }
   }
 
@@ -55,10 +69,12 @@ export class FranchiseTransferPage {
    * Open Manual Franchise Transfer Form
    */
   async openCreateFranchiseTransfer() {
-    const targetUrl = '/erp/inventory/franchise-transfer/indent-fulfillment';
-    await this.page.goto(targetUrl);
-    await this.page.waitForLoadState('domcontentloaded');
-    await this.page.waitForTimeout(600);
+    await this.navigateToFranchiseTransfer();
+    const createBtn = this.page.locator('button:has-text("Create Franchise Transfer"), button:has-text("Create Transfer"), button:has-text("Add New")').first();
+    if (await createBtn.isVisible({ timeout: 4000 }).catch(() => false)) {
+      await createBtn.click();
+      await this.page.waitForTimeout(800);
+    }
   }
 
   /**

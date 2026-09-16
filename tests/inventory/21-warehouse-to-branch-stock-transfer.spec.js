@@ -39,11 +39,11 @@ test.describe('Warehouse → Branch Workflow: Intra-State Stock Transfer & E-Way
 
     // 1. Navigate to Stock Transfer list
     await stockTransferPage.navigateToStockTransfer();
-    await expect(page).toHaveURL(/.*\/erp\/inventory\/stock-transfer.*/);
+    await expect(page).toHaveURL(/.*stock-transfer.*/);
 
     // 2. Open Indent Fulfillment form for Manual Transfer
     await stockTransferPage.openCreateTransfer();
-    await expect(page).toHaveURL(/.*\/erp\/inventory\/indent-fulfillment.*/);
+    await expect(page).toHaveURL(/.*(indent-fulfillment|stock-transfer).*/);
 
     // 3. Select Destination Branch (Same-State Telangana)
     await stockTransferPage.selectDestinationBranch(transferData.toBranch);

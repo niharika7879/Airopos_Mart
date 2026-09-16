@@ -38,7 +38,7 @@ test.describe('Master Configuration Workflow: Warehouse, Branch & Franchise Setu
 
     // 2. Navigate to Settings -> Warehouse
     await storeSettingsPage.navigateTo('warehouse');
-    await expect(page).toHaveURL(/.*\/erp\/settings\/warehouse.*/);
+    await expect(page).toHaveURL(/.*\/erp\/dashboard\/settings\/warehouse.*/);
 
     // 3. Open Add Store Dialog & Fill Details
     if (await storeSettingsPage.addBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -70,7 +70,7 @@ test.describe('Master Configuration Workflow: Warehouse, Branch & Franchise Setu
 
     // Navigate to Settings -> Branch
     await storeSettingsPage.navigateTo('branch');
-    await expect(page).toHaveURL(/.*\/erp\/settings\/branch.*/);
+    await expect(page).toHaveURL(/.*\/erp\/dashboard\/settings\/branch.*/);
 
     if (await storeSettingsPage.addBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
       await storeSettingsPage.openAddStoreDialog();
@@ -99,7 +99,7 @@ test.describe('Master Configuration Workflow: Warehouse, Branch & Franchise Setu
 
     // Navigate to Settings -> Franchise
     await storeSettingsPage.navigateTo('franchise');
-    await expect(page).toHaveURL(/.*\/erp\/settings\/franchise.*/);
+    await expect(page).toHaveURL(/.*\/erp\/dashboard\/settings\/franchise.*/);
 
     if (await storeSettingsPage.addBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
       await storeSettingsPage.openAddStoreDialog();

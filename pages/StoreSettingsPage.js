@@ -25,15 +25,14 @@ export class StoreSettingsPage {
     this.locationsTable = page.locator('.locations-table');
 
     // Dialog & Form Fields
-    this.dialog = page.locator('.add-store-dialog, .v-dialog:visible');
-    this.dialogTitle = page.locator('.modal-header .modal-title, .v-card-title');
+    this.dialog = page.locator('dialog:visible, .v-dialog:visible, .add-store-dialog');
+    this.dialogTitle = page.locator('.modal-header .modal-title, .v-card-title, dialog h3');
     this.storeNameInput = page.locator('input[placeholder*="name" i]').first();
     this.contactPersonInput = page.locator('input[placeholder*="Contact person" i]').first();
-    this.phoneInput = page.locator('.phone-number-input input, input[placeholder*="Enter phone number" i]').first();
+    this.phoneInput = page.locator('input[placeholder*="Enter phone number" i], input[placeholder*="phone" i]').first();
     this.emailInput = page.locator('input[placeholder*="example.com" i]').first();
-    this.gstinInput = page.locator('input[placeholder*="22AAAAA" i]').or(page.locator('.form-field:has-text("GSTIN") input')).first();
+    this.gstinInput = page.locator('input[placeholder*="22AAAAA" i], input[placeholder*="GSTIN" i]').first();
     this.pinCodeInput = page.locator('input[placeholder*="Enter PIN code" i]').first();
-    this.villageSelect = page.locator('.v-select:has-text("Village"), .form-field:has-text("Village") input').first();
 
     // Franchise Specific Fields
     this.fromDateInput = page.locator('input[type="date"]').first();
@@ -41,20 +40,37 @@ export class StoreSettingsPage {
 
     // Dialog Action Buttons
     this.saveBtn = page.locator('button:has-text("Save"), button:has-text("Create Store"), button:has-text("Create Warehouse"), button:has-text("Create Franchise")').first();
-    this.cancelBtn = page.locator('.modal-footer button:has-text("Cancel"), button:has-text("Cancel")').first();
+    this.cancelBtn = page.locator('dialog:visible button:has-text("Cancel"), .v-dialog:visible button:has-text("Cancel"), button:has-text("Cancel")').first();
   }
 
   /**
-   * Navigate directly to Warehouse, Branch, or Franchise settings
+   * Navigate to Warehouse, Branch, or Franchise settings via UI tabs
    * @param {'warehouse' | 'branch' | 'franchise'} type
    */
   async navigateTo(type = 'warehouse') {
-    const targetUrl = `/erp/settings/${type}`;
-    if (!this.page.url().includes(targetUrl)) {
-      await this.page.goto(targetUrl);
+    if (!this.page.url().includes('dashboard') && !this.page.url().includes('settings')) {
+      await this.page.goto('/erp/dashboard');
       await this.page.waitForLoadState('domcontentloaded');
     }
-    await this.locationsTable.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+
+    // 1. Click 'Settings' in top navbar
+    const settingsNav = this.page.getByText('Settings', { exact: true }).first();
+    if (await settingsNav.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await settingsNav.click();
+      await this.page.waitForTimeout(600);
+    }
+
+    // 2. Click specific tab: Warehouse, Branch, or Franchise
+    const tabName = type === 'warehouse' ? 'Warehouse' : (type === 'franchise' ? 'Franchise' : 'Branch');
+    const tab = this.page.locator('.categories-bar-content, .submenu-tabs, div, button')
+      .filter({ hasText: new RegExp(`^${tabName}$`, 'i') }).first();
+    
+    if (await tab.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await tab.click();
+      await this.page.waitForTimeout(800);
+    }
+
+    await this.locationsTable.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
   }
 
   /**
@@ -94,11 +110,14 @@ export class StoreSettingsPage {
       // Wait for auto-fill postal service
       await this.page.waitForTimeout(800);
     }
-    if (data.village && await this.villageSelect.isVisible().catch(() => false)) {
-      await this.villageSelect.click().catch(() => {});
-      const option = this.page.locator('.v-overlay:visible .v-list-item').first();
-      if (await option.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await option.click().catch(() => {});
+    if (data.village) {
+      const villageInput = this.page.locator('.form-field:has-text("Village") input, input[placeholder*="village" i], [role="combobox"]').first();
+      if (await villageInput.isVisible({ timeout: 1500 }).catch(() => false)) {
+        await villageInput.click({ timeout: 1500 }).catch(() => {});
+        const option = this.page.locator('.v-overlay:visible .v-list-item').first();
+        if (await option.isVisible({ timeout: 1500 }).catch(() => false)) {
+          await option.click({ timeout: 1500 }).catch(() => {});
+        }
       }
     }
     await this.page.waitForTimeout(400);
@@ -141,12 +160,28 @@ export class StoreSettingsPage {
   }
 
   /**
-   * Close dialog via Cancel button
+   * Close dialog via Cancel button and handle discard confirmation if prompted
    */
   async cancelDialog() {
-    if (await this.cancelBtn.isVisible().catch(() => false)) {
-      await this.cancelBtn.click().catch(() => {});
+    // 1. If an "Unsaved Changes" discard confirmation is already open, click "Discard"
+    const discardBtn = this.page.locator('dialog:visible button:has-text("Discard"), .v-dialog:visible button:has-text("Discard"), button:has-text("Discard")').first();
+    if (await discardBtn.isVisible({ timeout: 1200 }).catch(() => false)) {
+      await discardBtn.click({ timeout: 1500, force: true }).catch(() => {});
       await this.page.waitForTimeout(400);
+      return;
+    }
+
+    // 2. Click "Cancel" in the active store dialog
+    const cancelBtn = this.page.locator('dialog:visible button:has-text("Cancel"), .v-dialog:visible button:has-text("Cancel"), button:has-text("Cancel")').first();
+    if (await cancelBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+      await cancelBtn.click({ timeout: 1500, force: true }).catch(() => {});
+      await this.page.waitForTimeout(500);
+
+      // 3. If "Unsaved Changes" prompt appeared, confirm "Discard"
+      if (await discardBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await discardBtn.click({ timeout: 1500, force: true }).catch(() => {});
+        await this.page.waitForTimeout(400);
+      }
     }
   }
 }
