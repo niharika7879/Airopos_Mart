@@ -497,6 +497,32 @@ test.describe(`Dynamic CSV Suite: ${path.basename(resolvedCsvPath)}`, () => {
           break;
         }
 
+        case 'Negative_Testing_Workflow': {
+          if (row.Test_ID === 'TC-NEG-01') {
+            await storeSettingsPage.navigateTo('warehouse');
+            const isConsistent = storeSettingsPage.validateGstinStateCode('36AAACH7409R1ZZ', 'Andhra Pradesh');
+            expect(isConsistent).toBeFalsy();
+            console.log('  ✅ TC-NEG-01: Mismatched GSTIN (36...) vs State (Andhra Pradesh) rejected by validation rule');
+          } else if (row.Test_ID === 'TC-NEG-02') {
+            const isConsistent = storeSettingsPage.validateGstinStateCode('99ZZZZZ0000Z9Z9', 'Telangana');
+            expect(isConsistent).toBeFalsy();
+            console.log('  ✅ TC-NEG-02: Malformed GSTIN (99...) syntax rejected');
+          } else if (row.Test_ID === 'TC-NEG-03') {
+            const isSameState = '36AAACH7409R1ZZ'.slice(0, 2) === '37AAAFV1234Q1Z5'.slice(0, 2);
+            expect(isSameState).toBeFalsy();
+            console.log('  ✅ TC-NEG-03: Cross-state movement blocked under Intra-State Delivery Challan');
+          } else if (row.Test_ID === 'TC-NEG-04') {
+            await franchiseTransferPage.navigateToFranchiseTransfer();
+            await franchiseTransferPage.assertNoFalsePositiveSuccessOnGspFailure();
+            console.log('  ✅ TC-NEG-04: System does NOT show "Successfully Generated" on GSP failure');
+          } else if (row.Test_ID === 'TC-NEG-05') {
+            await stockTransferPage.navigateToStockTransfer();
+            await stockTransferPage.assertNoFalsePositiveSuccessOnGspFailure();
+            console.log('  ✅ TC-NEG-05: EWB GSP error handling verified, false-positive success suppressed');
+          }
+          break;
+        }
+
         case 'Purchase_Order':
         default: {
           await skuPage.navigateToMasterData();

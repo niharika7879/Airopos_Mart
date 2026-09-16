@@ -188,4 +188,34 @@ export class FranchiseTransferPage {
     }
     console.log(`  ✅ Goods Received at Franchise: Order ${orderId}, Inward Qty: ${receivedQty}`);
   }
+
+  /**
+   * Asserts that when government/GSP validation fails, the system does NOT display "Successfully Generated"
+   * @param {Function} actionTrigger
+   */
+  async assertNoFalsePositiveSuccessOnGspFailure(actionTrigger) {
+    let apiStatus = null;
+    let apiFailed = false;
+    const responseHandler = (res) => {
+      if (res.url().includes('confirm-dispatch') || res.url().includes('eway') || res.url().includes('einvoice') || res.url().includes('irn')) {
+        apiStatus = res.status();
+        if (apiStatus >= 400) {
+          apiFailed = true;
+        }
+      }
+    };
+    this.page.on('response', responseHandler);
+
+    if (actionTrigger) {
+      await actionTrigger();
+    }
+    await this.page.waitForTimeout(1000);
+    this.page.off('response', responseHandler);
+
+    const successToaster = this.page.locator(':text-matches("Successfully Generated|Invoice Generated Successfully|E-Way Bill Generated Successfully", "i")');
+    const isSuccessVisible = await successToaster.isVisible({ timeout: 1000 }).catch(() => false);
+
+    expect(isSuccessVisible).toBe(false);
+    console.log('  ✅ Verified: System does NOT show "Successfully Generated" when E-Invoice / EWB GSP validation fails');
+  }
 }

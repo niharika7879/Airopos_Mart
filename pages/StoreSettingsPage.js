@@ -133,12 +133,16 @@ export class StoreSettingsPage {
   }
 
   /**
-   * Validate GSTIN State Code matches the State name
+   * Validate GSTIN syntax and ensure State Code matches the State name
    * @param {string} gstin
    * @param {string} expectedState
    */
   validateGstinStateCode(gstin, expectedState) {
-    if (!gstin || gstin.length < 2) return false;
+    if (!gstin || gstin.length !== 15) return false;
+    // Standard Indian GSTIN Regex: 2 digits state code + 10 char PAN + 1 char entity + Z + 1 char check
+    const gstinPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+    if (!gstinPattern.test(gstin.toUpperCase())) return false;
+
     const stateCode = gstin.substring(0, 2);
     const mappedState = GSTIN_STATE_CODES[stateCode];
     if (!mappedState) return false;
@@ -157,6 +161,55 @@ export class StoreSettingsPage {
     if (expectedGstin) {
       await expect(row).toContainText(expectedGstin);
     }
+  }
+
+  /**
+   * Attempt to save store details with deliberate mismatch and capture validation result
+   * Rule:
+   *   Should system allow?
+   *   NO  -> Correct validation
+   *   YES -> 🐛 Bug
+   * @param {Object} data
+   */
+  async attemptSaveWithMismatch(data) {
+    await this.fillStoreDetails(data);
+    await this.page.waitForTimeout(600);
+
+    let apiCalled = false;
+    let apiResponseStatus = null;
+    const responseHandler = (res) => {
+      if (res.url().includes('/stores/create') || res.url().includes('/stores')) {
+        if (res.request().method() === 'POST') {
+          apiCalled = true;
+          apiResponseStatus = res.status();
+        }
+      }
+    };
+    this.page.on('response', responseHandler);
+
+    await this.saveBtn.click({ timeout: 3000, force: true }).catch(() => {});
+    await this.page.waitForTimeout(1500);
+    this.page.off('response', responseHandler);
+
+    const errorMessages = await this.page
+      .locator('.v-messages__message, .v-alert, .v-snackbar, [role="alert"]')
+      .allInnerTexts()
+      .catch(() => []);
+    const cleanErrors = errorMessages.map(t => t.trim()).filter(Boolean);
+
+    const isDialogOpen = await this.dialog.isVisible().catch(() => false);
+    const isBlocked = isDialogOpen && (cleanErrors.length > 0 || (apiCalled && apiResponseStatus >= 400));
+    const isAllowed = !isDialogOpen || (apiCalled && apiResponseStatus < 400 && cleanErrors.length === 0);
+    const isStateConsistent = this.validateGstinStateCode(data.gstin, data.state);
+    const isBug = isAllowed && !isStateConsistent;
+
+    return {
+      isBlocked,
+      allowed: isAllowed,
+      hasValidationError: cleanErrors.length > 0,
+      errorMessages: cleanErrors,
+      isBug
+    };
   }
 
   /**

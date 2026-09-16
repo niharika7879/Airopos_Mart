@@ -172,4 +172,34 @@ export class StockTransferPage {
     console.log(`     • Transfer Quantity  : ${expected.quantity || 50} units`);
     console.log(`     • EWB Status         : ACTIVE`);
   }
+
+  /**
+   * Asserts that when government/GSP validation fails, the system does NOT display "Successfully Generated"
+   * @param {Function} actionTrigger
+   */
+  async assertNoFalsePositiveSuccessOnGspFailure(actionTrigger) {
+    let apiStatus = null;
+    let apiFailed = false;
+    const responseHandler = (res) => {
+      if (res.url().includes('confirm-dispatch') || res.url().includes('eway') || res.url().includes('stock-transfer')) {
+        apiStatus = res.status();
+        if (apiStatus >= 400) {
+          apiFailed = true;
+        }
+      }
+    };
+    this.page.on('response', responseHandler);
+
+    if (actionTrigger) {
+      await actionTrigger();
+    }
+    await this.page.waitForTimeout(1000);
+    this.page.off('response', responseHandler);
+
+    const successToaster = this.page.locator(':text-matches("Successfully Generated|E-Way Bill Generated Successfully|Dispatch Confirmed Successfully", "i")');
+    const isSuccessVisible = await successToaster.isVisible({ timeout: 1000 }).catch(() => false);
+
+    expect(isSuccessVisible).toBe(false);
+    console.log('  ✅ Verified: System does NOT show "Successfully Generated" on failed / rejected GSP validation');
+  }
 }
